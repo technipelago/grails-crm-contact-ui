@@ -1,0 +1,7 @@
+#map-canvas {
+    width: 530px;
+    height: 400px;
+}
+#map-canvas img {
+    max-width: none !important;
+}

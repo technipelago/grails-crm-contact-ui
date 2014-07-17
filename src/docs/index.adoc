@@ -1,0 +1,92 @@
+= GR8 CRM - Contact Management User Interface Plugin
+Göran Ehrsson <goran@technipelago.se>
+:description: Official documentation for the GR8 CRM Contact Management User Interface Plugin
+:keywords: groovy, grails, crm, gr8crm, documentation
+:toc:
+:numbered:
+:icons: font
+:imagesdir: ./images
+:source-highlighter: prettify
+:homepage: http://gr8crm.github.io
+:gr8crm: GR8 CRM
+:gr8source: https://github.com/technipelago/grails-crm-contact-lite
+:license: This plugin is licensed with http://www.apache.org/licenses/LICENSE-2.0.html[Apache License version 2.0]
+
+== Introduction
+
+{gr8crm} is a set of http://www.grails.org/[Grails Web Application Framework]
+plugins that makes it easy to develop web applications with CRM functionality.
+
+=== Customer Relationship Management
+
+Customer relationship management (CRM) is a system for managing a company’s interactions with current and future customers.
+It involves using technology to organize, automate and synchronize sales, marketing, customer service, and technical support.
+http://en.wikipedia.org/wiki/Customer_relationship_management[Wikipedia]
+
+The {gr8crm} "Ecosystem" currently contains over 40 Grails plugins. For a complete list of plugins see http://gr8crm.github.io.
+
+Each {gr8crm} plugin defines a http://martinfowler.com/bliki/BoundedContext.html[Bounded Context]
+that focus on one specific domain, for example *contact*, *project* or *document*.
+
+== Contact Management User Interface Plugin
+
+The +crm-contact-lite+ plugin is a companion plugin to the +crm-contact+ plugin. It provides user interfaces for managing
+companies, people and relationships between them. You can use it as a simple address book or as the base of a complex
+customer relationship management system. The plugin is generic but flexible, it has proven support for many different use-cases.
+
+=== Search Contacts
+
+To query for contacts you visit +crmContact/index+ which will show the query form.
+
+image::crm-contact-find.png[The contact query form, role="thumb"]
+
+You can enter query values in any field and then hit the +Search+ button to search for contacts matching your query.
+If you don't enter any query value all contacts will be included in the search result.
+
+If the query result contains more than one contact, a contact list will be displayed. If the query result contains
+exactly one contact, then details for that contact will be displayed.
+I.e. it will skip the +list+ view and go directly to the +show+ view.
+
+image::crm-contact-list.png[The contact list, role="thumb"]
+
+You can click on any contact to show details for that contact.
+
+=== Contact Details
+
+The contact details page +crmContact/show+ shows all the details for a selected contact.
+Here you will find contact name, address and telefon numbers.
+
+image::crm-contact-show.png[Contact details, role="thumb"]
+
+If the +crm-tags+ plugin is installed you can see existing tags and add new tags to a contact.
+
+=== Edit Contact Details
+
+To edit contact details you hit the +Edit+ button. This will display the edit page +crmContact/edit+.
+Here you can alter values and then hit +Save+ to store the new values in the database.
+
+image::crm-contact-edit.png[Edit contact details, role="thumb"]
+
+=== vCard as QRCode
+
+A nice feature in the +crmContact/show+ page is the possibility to show contact details in vCard/QRCode format.
+The +View+ button has a sub menu called *Show vCard*. This option will open a modal frame that displays contact
+information in a QRCode image. This image can be scanned with a smartphone and imported to the telephone's address book
+just by holding the telephone in front of the computer screen.
+
+image::crm-contact-vcard.png[vCard as QRCode image, role="thumb"]
+
+A simple but powerful address book integration!
+
+[NOTE]
+====
+iOS does not have built-in support for scanning QRCode images, but you can download scanner apps from App Store.
+====
+
+== License
+
+{license}
+
+== Source Code
+
+The source code for this plugin is available at {gr8source}

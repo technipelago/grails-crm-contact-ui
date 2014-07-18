@@ -48,12 +48,10 @@ grails.project.dependency.resolution = {
         compile ":user-tag:0.6"
 
         compile ":crm-core:2.0.0"
-        //compile ":crm-contact:2.0.0"
+        compile ":crm-contact:2.0.0"
         compile ":crm-security:2.0.0"
         compile ":crm-tags:2.0.0"
         compile ":crm-feature:2.0.0"
         compile ":crm-ui-bootstrap:2.0.0"
     }
 }
-
-grails.plugin.location.'crm-contact' = "../crm-contact"

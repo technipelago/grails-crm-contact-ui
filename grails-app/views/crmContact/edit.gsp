@@ -52,6 +52,22 @@
                 var tab = $(ev.target.hash);
                 $(':input[type="text"]:visible:enabled:first', tab).focus();
             });
+
+            // Parent company.
+            $("input[name='parent.name']").autocomplete("${createLink(controller: 'crmContact', action: 'autocompleteCompany', id: crmContact.id)}", {
+                remoteDataType: 'json',
+                preventDefaultReturn: true,
+                selectFirst: true,
+                useCache: false,
+                filter: false,
+                onItemSelect: function(item) {
+                    var id = item.data[0];
+                    $("input[name='parent.id']").val(id);
+                },
+                onNoMatch: function() {
+                    $("input[name='parent.id']").val('null');
+                }
+            });
         });
     </r:script>
 </head>
@@ -123,6 +139,10 @@
                                 <g:if test="${crmContact.company}">
                                     <f:field property="name" input-autofocus="" required=""
                                              input-class="span12"/>
+                                    <f:field property="parent">
+                                        <input type="hidden" name="parent.id" value="${crmContact.parentId}"/>
+                                        <g:textField name="parent.name" value="${crmContact.parent?.name}" class="span11"/>
+                                    </f:field>
                                     <f:field property="telephone" input-class="span7"/>
                                     <f:field property="fax" input-class="span7"/>
                                 </g:if>

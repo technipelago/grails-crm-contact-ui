@@ -13,7 +13,38 @@
     </thead>
     <tbody>
 
-    <g:each in="${result}" status="i" var="relation">
+    <g:if test="${bean.parent}">
+        <tr>
+            <td><g:link action="show"
+                        id="${bean.parent.id}">${fieldValue(bean: bean.parent, field: "name")}</g:link></td>
+
+            <td>${fieldValue(bean: bean.parent, field: "address")}</td>
+
+            <td><a href="tel:${fieldValue(bean: bean.parent, field: "telephone").replaceAll(/\W/, '')}">${fieldValue(bean: bean.parent, field: "telephone")}</a></td>
+
+            <td><a href="mailto:${fieldValue(bean: bean.parent, field: "email")}"><g:decorate max="20">${fieldValue(bean: bean.parent, field: "email")}</g:decorate></a></td>
+
+            <td><g:message code="crmContact.parent.label"/></td>
+            </tr>
+
+    </g:if>
+
+    <g:each in="${children}" status="i" var="child">
+        <tr>
+            <td><g:link action="show"
+                        id="${child.id}">${fieldValue(bean: child, field: "name")}</g:link></td>
+
+            <td>${fieldValue(bean: child, field: "address")}</td>
+
+            <td><a href="tel:${fieldValue(bean: child, field: "telephone").replaceAll(/\W/, '')}">${fieldValue(bean: child, field: "telephone")}</a></td>
+
+            <td><a href="mailto:${fieldValue(bean: child, field: "email")}"><g:decorate max="20">${fieldValue(bean: child, field: "email")}</g:decorate></a></td>
+
+            <td><g:message code="crmContact.child.label"/></td>
+        </tr>
+    </g:each>
+
+    <g:each in="${relations}" status="i" var="relation">
         <g:set var="related" value="${relation.getRelated(bean)}"/>
         <tr>
             <td>

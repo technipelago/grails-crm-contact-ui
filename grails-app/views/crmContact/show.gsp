@@ -79,7 +79,7 @@
     <li>
         <a href="#relations" data-toggle="tab">
             <g:message code="crmContact.tab.relations.label"/>
-            <crm:countIndicator count="${relations.size()}"/>
+            <crm:countIndicator count="${relations.size() + children.size() + (crmContact.parent ? 1 : 0)}"/>
         </a>
     </li>
     <crm:pluginViews location="tabs" var="view">
@@ -239,27 +239,14 @@
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-
-            <g:unless test="${crmContact.children}">
-                <li>
-                    <g:link action="changeType" id="${crmContact.id}"
-                            title="${message(code: 'crmContact.change.type.help', default: '')}"
-                            onclick="return confirm('${message(code: 'crmContact.change.type.confirm', default: 'Are you sure you want to change type?')}')">
-                        <g:message code="crmContact.button.change.type.label" default="Change type to {1}"
-                                   args="${[crmContact.toString(), crmContact.company ? message(code: 'crmPerson.label', default: 'Person') : message(code: 'crmCompany.label', default: 'Company')]}"/>
-                    </g:link>
-                </li>
-            </g:unless>
-            <g:unless test="${crmContact.company}">
-                <li>
-                    <a href="${createLink(controller: 'crmContact', action: 'changeParent', id: crmContact.id)}"
-                       data-toggle="modal"
-                       data-target="#editModal"
-                       title="${message(code: 'crmContact.change.parent.help', default: '')}">
-                        <g:message code="crmContact.button.change.parent.label" default="Switch company/employer"/>
-                    </a>
-                </li>
-            </g:unless>
+            <li>
+                <g:link action="changeType" id="${crmContact.id}"
+                        title="${message(code: 'crmContact.change.type.help', default: '')}"
+                        onclick="return confirm('${message(code: 'crmContact.change.type.confirm', default: 'Are you sure you want to change type?')}')">
+                    <g:message code="crmContact.button.change.type.label" default="Change type to {1}"
+                               args="${[crmContact.toString(), crmContact.company ? message(code: 'crmPerson.label', default: 'Person') : message(code: 'crmCompany.label', default: 'Company')]}"/>
+                </g:link>
+            </li>
         </ul>
     </crm:button>
 
@@ -342,7 +329,7 @@
 </div>
 
 <div class="tab-pane" id="relations">
-    <tmpl:relations bean="${crmContact}" result="${relations}"/>
+    <tmpl:relations bean="${crmContact}" children="${children}" relations="${relations}"/>
 
     <g:form>
         <g:hiddenField name="id" value="${crmContact?.id}"/>

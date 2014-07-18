@@ -372,7 +372,7 @@ class CrmContactController {
                     targetContact = recentDomainService.getHistory(request, CrmContact, 'changeParent')?.find { it }
                 }
 
-                return [crmContact: crmContact, relations: crmContact.relations, primaryRelation: crmContact.primaryRelation,
+                return [crmContact: crmContact, children: crmContact.children ?: Collections.EMPTY_LIST, relations: crmContact.relations, primaryRelation: crmContact.primaryRelation,
                         externalLink: externalLink, targetContact: targetContact, selection: params.getSelectionURI()]
             }
             json {
@@ -763,9 +763,11 @@ class CrmContactController {
         }
     }
 
-    def autocompleteCompany() {
+    def autocompleteCompany(Long id) {
         def result = listCompanies(params.q, params.int('limit'))
-        //def result = list.collect {"${it[0]}|${it[1]}"}.join('\n')
+        if(id) {
+            result = result.findAll{it[1] != id}
+        }
         WebUtils.noCache(response)
         render result as JSON
     }

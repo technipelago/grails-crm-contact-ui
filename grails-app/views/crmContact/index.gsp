@@ -7,6 +7,34 @@
     <title><g:message code="crmContact.find.title" args="[entityName]"/></title>
     <r:require module="autocomplete"/>
     <r:script>
+    var CRM = {
+        showParentFields: function() {
+            var $company = $('input[name="company"]');
+            var $person = $('input[name="person"]');
+            if($company.is(':checked') && $person.is(':checked')) {
+                $("#parent").val('');
+                $("#related").val('');
+                $("#title").val('');
+                $(".company-group").hide();
+                $(".person-group").hide();
+            } else if($company.is(':checked')) {
+                $("#related").val('');
+                $("#title").val('');
+                $(".person-group").hide();
+                $(".company-group").show();
+            } else if($person.is(':checked')) {
+                $("#parent").val('');
+                $(".company-group").hide();
+                $(".person-group").show();
+            } else {
+                $("#parent").val('');
+                $("#related").val('');
+                $("#title").val('');
+                $(".company-group").hide();
+                $(".person-group").hide();
+            }
+        }
+    };
     $(document).ready(function() {
         $("input[name='title']").autocomplete("${createLink(action: 'autocompleteTitle', params: [max: 20])}", {
             remoteDataType: 'json',
@@ -37,20 +65,14 @@
             selectFirst: true
         });
         $('input[name="company"]').on('change', function(ev) {
+            CRM.showParentFields();
             $("#name").focus();
         });
         $('input[name="person"]').on('change', function(ev) {
-            if($(this).is(':checked')) {
-                $("#parentField").show();
-            } else {
-                $("#parent").val('');
-                $("#parentField").hide();
-            }
+            CRM.showParentFields();
             $("#name").focus();
         });
-        if($("#parent").val() || $('input[name="person"]').is(':checked')) {
-            $("#parentField").show();
-        }
+        CRM.showParentFields();
     });
     </r:script>
 </head>
@@ -100,7 +122,7 @@
                 </div>
             </div>
 
-            <div id="parentField" class="control-group hide">
+            <div id="parentField" class="control-group company-group">
                 <label class="control-label">
                     <g:message code="crmContact.parent.label"/>
                 </label>
@@ -110,13 +132,23 @@
                 </div>
             </div>
 
-            <div class="control-group">
+            <div id="relatedField" class="control-group person-group">
+                <label class="control-label">
+                    <g:message code="crmContact.related.label"/>
+                </label>
+
+                <div class="controls">
+                    <g:textField name="related" value="${cmd?.related}" class="span12"/>
+                </div>
+            </div>
+
+            <div id="titleField" class="control-group person-group">
                 <label class="control-label">
                     <g:message code="crmContact.title.label"/>
                 </label>
 
                 <div class="controls">
-                    <g:textField name="title" value="${cmd.title}" autofocus="" class="span12"/>
+                    <g:textField name="title" value="${cmd.title}" class="span12"/>
                 </div>
             </div>
 
@@ -126,7 +158,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="email" value="${cmd.email}" autofocus="" class="span12"/>
+                    <g:textField name="email" value="${cmd.email}" class="span12"/>
                 </div>
             </div>
 
@@ -136,7 +168,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="telephone" value="${cmd.telephone}" autofocus="" class="span12"/>
+                    <g:textField name="telephone" value="${cmd.telephone}" class="span12"/>
                 </div>
             </div>
         </div>
@@ -150,7 +182,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="address1" value="${cmd.address1}" autofocus="" class="span12"/>
+                    <g:textField name="address1" value="${cmd.address1}" class="span12"/>
                 </div>
             </div>
 
@@ -160,7 +192,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="address2" value="${cmd.address2}" autofocus="" class="span12"/>
+                    <g:textField name="address2" value="${cmd.address2}" class="span12"/>
                 </div>
             </div>
 
@@ -170,7 +202,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="address3" value="${cmd.address3}" autofocus="" class="span12"/>
+                    <g:textField name="address3" value="${cmd.address3}" class="span12"/>
                 </div>
             </div>
 
@@ -189,7 +221,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="country" value="${cmd.country}" autofocus="" class="span12"/>
+                    <g:textField name="country" value="${cmd.country}" class="span12"/>
                 </div>
             </div>
 
@@ -199,7 +231,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="username" value="${cmd.username}" autofocus="" class="span12"/>
+                    <g:textField name="username" value="${cmd.username}" class="span12"/>
                 </div>
             </div>
         </div>
@@ -213,7 +245,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="number" value="${cmd.number}" autofocus="" class="span10"/>
+                    <g:textField name="number" value="${cmd.number}" class="span10"/>
                 </div>
             </div>
 
@@ -223,7 +255,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="number2" value="${cmd.number2}" autofocus="" class="span10"/>
+                    <g:textField name="number2" value="${cmd.number2}" class="span10"/>
                 </div>
             </div>
 
@@ -233,7 +265,7 @@
                 </label>
 
                 <div class="controls">
-                    <g:textField name="ssn" value="${cmd.ssn}" autofocus="" class="span10"/>
+                    <g:textField name="ssn" value="${cmd.ssn}" class="span10"/>
                 </div>
             </div>
 

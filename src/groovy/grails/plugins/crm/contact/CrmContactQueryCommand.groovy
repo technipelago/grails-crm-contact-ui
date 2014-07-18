@@ -12,6 +12,7 @@ class CrmContactQueryCommand implements Serializable {
     String duns
     String name
     String parent
+    String related
     String birthYear
     String birthMonth
     String birthDay

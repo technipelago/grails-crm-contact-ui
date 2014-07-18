@@ -14,3 +14,7 @@ With CRM we mean features like:
 ## Contact Management User Interface for GR8 CRM
 This plugin provides a Twitter Bootstrap user interface for contact management in GR8 CRM.
 It depends on the **crm-contact** plugin for services and persistence.
+
+### Documentation
+
+Complete documentation for this plugin can be found at [gr8crm.github.io](http://gr8crm.github.io/plugins/crm-contact-ui/)

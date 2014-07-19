@@ -504,10 +504,14 @@ class CrmContactController {
                     redirect(action: 'show', id: id)
                     return
                 }
-                crmContact.firstName = crmContact.name
+                def names = fixFirstLastName([firstName: crmContact.name])
+                crmContact.firstName = names.firstName
+                crmContact.lastName = names.lastName
                 crmContact.name = null
                 // Remove all categories.
-                for (c in crmContact.categories.clone()) {
+                def removeUs = []
+                removeUs.addAll(crmContact.categories)
+                for (c in removeUs) {
                     crmContact.removeFromCategories(c)
                     c.delete()
                 }
@@ -527,6 +531,17 @@ class CrmContactController {
             }
             redirect(action: 'show', id: id)
         }
+    }
+
+    private Map fixFirstLastName(final Map params) {
+        if (params.firstName && !params.lastName) {
+            String[] tmp = params.firstName.split(' ')
+            params.firstName = tmp[0]
+            if (tmp.length > 1) {
+                params.lastName = tmp[1..-1].join(' ')
+            }
+        }
+        return params
     }
 
     def createFavorite(Long id) {

@@ -605,13 +605,12 @@ class CrmContactController {
             redirect(action: 'show', id: id, fragment: "relations")
         } else {
             def relation = new CrmContactRelation(a: crmContact)
-            def existing = crmContact.getRelations().collect { it.getRelated(crmContact).id }
-            existing << crmContact.id
-            def recentContacts = recentDomainService.getHistory(request, CrmContact)?.findAll {
-                !existing.contains(it.id)
+            // If this person has no existing relations, set property 'primary' to true by default.
+            if(crmContact.person && ! crmContact.getRelations()) {
+                relation.primary = true
             }
             render template: 'addRelation', model: [bean: relation, crmContact: crmContact,
-                    relationTypes: crmContactService.listRelationType(null), recentContacts: recentContacts]
+                    relationTypes: crmContactService.listRelationType(null)]
         }
     }
 

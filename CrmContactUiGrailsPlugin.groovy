@@ -32,11 +32,11 @@ class CrmContactUiGrailsPlugin {
     def description = '''
 Provides contact management user interface for GR8 CRM applications.
 '''
-    def documentation = "https://github.com/gr8crm/grails-crm-contact-ui"
+    def documentation = "http://gr8crm.github.io/plugins/crm-contact-ui/"
     def license = "APACHE"
     def organization = [name: "Technipelago AB", url: "http://www.technipelago.se/"]
-    def issueManagement = [system: "github", url: "https://github.com/gr8crm/grails-crm-contact-ui/issues"]
-    def scm = [url: "https://github.com/gr8crm/grails-crm-contact-ui"]
+    def issueManagement = [system: "github", url: "https://github.com/technipelago/grails-crm-contact-ui/issues"]
+    def scm = [url: "https://github.com/technipelago/grails-crm-contact-ui"]
 
     def features = {
         crmContact {

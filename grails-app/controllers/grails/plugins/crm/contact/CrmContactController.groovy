@@ -779,7 +779,8 @@ class CrmContactController {
             }
             maxResults(params.int('limit') ?: 10)
         }.collect { [id: it.id, name: it.fullName, address: it.address.toString()] }
-        // Append 10 most recent viewed contacts.
+
+        // Append most recent viewed contacts.
         def recentContacts = recentDomainService.getHistory(request, CrmContact)?.findAll { handle ->
             handle.id != id && !result.find { it.id == handle.id }
         }.collect {

@@ -53,7 +53,7 @@
                                 return {results: data};
                             }
                         },
-                        placeholder: "Välj en befintlig kontakt eller skriv in namnet på en ny",
+                        placeholder: "${message(code: 'crmContactRelation.create.placeholder')}",
                         allowClear: true,
                         minimumInputLength: 1,
                         createSearchChoice: function(term) {
@@ -64,11 +64,11 @@
                         escapeMarkup: function (m) { return m; },
                         formatResult: function(data) { return data.recent ? '<strong>' + data.name + '</strong>' : data.name; },
                         formatSelection: function(data) { return data.name; },
-                        formatNoMatches: function (term) { return "${message(code: 'crmContact.search.noresult', default: 'Inga träffar')}"; },
-                        formatInputTooShort: function (input, min) { return "${message(code: 'crmContact.search.noresult', default: 'Skriv in början på namnet eller använd wildcard')}"; },
-                        formatInputTooLong: function (input, max) { return "${message(code: 'crmContact.search.noresult', default: 'Skriv in början på namnet eller använd wildcard')}"; },
-                        formatLoadMore: function (pageNumber) { return "${message(code: 'crmContact.search.loading', default: 'Laddar fler resultat…')}"; },
-                        formatSearching: function () { return "${message(code: 'crmContact.search.searching', default: 'Söker…')}"; }
+                        formatNoMatches: function (term) { return "${message(code: 'crmContact.search.noresult')}"; },
+                        formatInputTooShort: function (input, min) { return "${message(code: 'crmContact.search.help')}"; },
+                        formatInputTooLong: function (input, max) { return "${message(code: 'crmContact.search.help')}"; },
+                        formatLoadMore: function (pageNumber) { return "${message(code: 'crmContact.search.loading')}"; },
+                        formatSearching: function () { return "${message(code: 'crmContact.search.searching')}"; }
                     });
 
                     $modal.modal('show');

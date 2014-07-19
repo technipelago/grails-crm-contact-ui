@@ -40,5 +40,12 @@
     </g:form>
 </g:each>
 
+<div class="form-actions">
+    <select:link action="list" selection="${selection}" class="btn">
+        <i class="icon-remove"></i>
+        <g:message code="crmContact.button.back.label" default="Back"/>
+    </select:link>
+</div>
+
 </body>
 </html>

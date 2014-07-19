@@ -16,20 +16,27 @@
         <input type="hidden" name="namespace" value="${l.namespace}"/>
         <input type="hidden" name="topic" value="${l.topic}"/>
 
-        <g:if test="${l.thumbnail}">
-            <img src="${l.thumbnail}" class="pull-right"/>
-        </g:if>
+        <div class="row-fluid">
+            <div class="span7">
+                <h3>${l.name?.encodeAsHTML()}</h3>
 
-        <h3>${l.name?.encodeAsHTML()}</h3>
+                <p class="lead">
+                    ${l.description?.encodeAsHTML()}
+                </p>
 
-        <p class="lead">
-            ${l.description?.encodeAsHTML()}
-        </p>
+                <button type="submit" class="btn btn-info">
+                    <i class="icon-ok icon-white"></i>
+                    <g:message code="crmContact.button.select.label" default="Select"/>
+                </button>
+            </div>
 
-        <button type="submit" class="btn btn-info">
-            <i class="icon-ok icon-white"></i>
-            <g:message code="crmContact.button.select.label" default="Select"/>
-        </button>
+            <div class="span5">
+                <g:if test="${l.thumbnail}">
+                    <img src="${l.thumbnail}" class="pull-right"/>
+                </g:if>
+            </div>
+        </div>
+
     </g:form>
 </g:each>
 

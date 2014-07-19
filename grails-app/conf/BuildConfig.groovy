@@ -13,10 +13,6 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
-        // Without xhtmlrenderer and itext we get unresolved dependencies in the Jenkins build!?
-        // I tried 'legacyResolve true' but it did not help. Strange...
-        compile "org.xhtmlrenderer:core-renderer:R8"
-        compile "com.lowagie:itext:2.1.0"
     }
 
     plugins {
@@ -39,7 +35,6 @@ grails.project.dependency.resolution = {
         }
 
         compile(":qrcode:0.6")
-        compile(":rendering:0.4.4")
         compile ":selection:0.9.6"
         compile ":sequence-generator:1.0"
         compile ":selection-repository:0.9.3"

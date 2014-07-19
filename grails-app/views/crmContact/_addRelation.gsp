@@ -11,20 +11,20 @@
                        args="${[entityName, crmContact]}"/></h3>
     </div>
 
-    <div class="modal-body">
+    <div id="add-relation-body" class="modal-body" style="overflow: auto;">
 
-        <g:if test="${recentContacts}">
-            <div class="control-group">
-                <label class="control-label">Skapa en relation till någon av följande kontakter</label>
-                <g:each in="${recentContacts}" var="recent">
-                    <g:set var="obj" value="${recent.object}"/>
-                    <label class="radio">
-                        <g:radio name="b.id" value="${recent.id}"/> ${obj.fullName.encodeAsHTML()} ${obj.address}
-                    </label>
-                </g:each>
+        <div class="control-group">
+            <label class="control-label">Kontakt</label>
+            <div class="controls">
+                <input type="hidden" name="related" style="width: 75%;"/>
             </div>
-        </g:if>
-
+        </div>
+<%--
+        <g:each in="${recentContacts}" var="recent">
+            <g:set var="obj" value="${recent.object}"/>
+            <option value="${recent.id}">${obj.fullName.encodeAsHTML()} ${obj.address}</option>
+        </g:each>
+--%>
         <div class="control-group">
             <label class="control-label">Typ av relation</label>
 

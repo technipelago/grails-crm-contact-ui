@@ -133,7 +133,7 @@ class CrmContactController {
 
     def export() {
         def user = crmSecurityService.getUserInfo()
-        if(request.post) {
+        if (request.post) {
             def filename = message(code: 'crmContact.label', default: 'Contact')
             try {
                 def namespace = params.namespace ?: 'crmContact'
@@ -559,18 +559,31 @@ class CrmContactController {
             return
         }
         if (request.post) {
-            if (params['b.id']) {
-                def related = crmContactService.getContact(Long.valueOf(params['b.id']))
-                if (!related) {
+            def related = params.related
+            def relatedContact
+            if(related?.isNumber()) {
+                relatedContact = crmContactService.getContact(Long.valueOf(related))
+                if (!relatedContact) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND)
                     return
                 }
-                if (related.tenantId != crmContact.tenantId) {
+                if (relatedContact.tenantId != crmContact.tenantId) {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN)
                     return
                 }
-                def relation = crmContactService.addRelation(crmContact, related, type, primary, description)
-                flash.success = "Relation ${relation} skapad mellan $crmContact och $related"
+            } else if(related) {
+                if(related.startsWith('@')) {
+                    relatedContact = crmContactService.createPerson(firstName: related[1..-1], true)
+                } else if(related.endsWith('@')) {
+                    relatedContact = crmContactService.createPerson(firstName: related[0..-2], true)
+                } else {
+                    relatedContact = crmContactService.createCompany(name: related, true)
+                }
+            }
+
+            if (relatedContact) {
+                def relation = crmContactService.addRelation(crmContact, relatedContact, type, primary, description)
+                flash.success = "Relation ${relation} skapad mellan $crmContact och $relatedContact"
             } else {
                 flash.warning = "No relation created"
             }
@@ -736,6 +749,29 @@ class CrmContactController {
         if (id) {
             result = result.findAll { it[1] != id }
         }
+        WebUtils.noCache(response)
+        render result as JSON
+    }
+
+    def autocompleteContact(Long id, String q) {
+        def result = CrmContact.createCriteria().list() {
+            eq('tenantId', TenantUtils.tenant)
+            if (q) {
+                ilike('name', SearchUtils.wildcard(q))
+            }
+            if (id) {
+                ne('id', id)
+            }
+            maxResults(params.int('limit') ?: 10)
+        }.collect { [id: it.id, name: it.fullName, address: it.address.toString()] }
+        // Append 10 most recent viewed contacts.
+        def recentContacts = recentDomainService.getHistory(request, CrmContact)?.findAll { handle ->
+            handle.id != id && !result.find { it.id == handle.id }
+        }.collect {
+            def obj = it.object
+            [id: it.id, name: obj.fullName, address: obj.address.toString(), recent: true]
+        }
+        result.addAll(recentContacts)
         WebUtils.noCache(response)
         render result as JSON
     }

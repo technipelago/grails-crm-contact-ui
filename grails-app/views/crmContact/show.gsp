@@ -5,6 +5,7 @@
     <meta name="layout" content="main"/>
     <g:set var="entityName" value="${message(code: 'crmContact.label', default: 'Contact')}"/>
     <title><g:message code="crmContact.show.title" args="[entityName, crmContact]"/></title>
+    <r:require module="select2"/>
     <r:script>
         $(document).ready(function () {
             $('#editModal').on('shown', function () {
@@ -31,10 +32,45 @@
                     $modal.modal('show');
                 });
             });
-            $("#add-relation a").click(function(ev) {
+            $("#add-relation").click(function(ev) {
                 ev.preventDefault();
                 var $modal = $("#relationModal");
                 $modal.load("${createLink(action: 'addRelation', id: crmContact.id)}", function() {
+
+                    var $searchField = $('input[name="related"]', $modal);
+
+                    $searchField.select2({
+                        ajax: {
+                            url: "${createLink(action: 'autocompleteContact', id: crmContact.id)}",
+                            dataType: 'json',
+                            data: function (term, page) {
+                                return {
+                                    q: term, // search term
+                                    limit: 10
+                                };
+                            },
+                            results: function (data, page) {
+                                return {results: data};
+                            }
+                        },
+                        placeholder: "Välj en befintlig kontakt eller skriv in namnet på en ny",
+                        allowClear: true,
+                        minimumInputLength: 1,
+                        createSearchChoice: function(term) {
+                            var sanitized = term.replace(/,/g, " ")
+                            return {id: sanitized, name: sanitized};
+                        },
+                        createSearchChoicePosition: "top",
+                        escapeMarkup: function (m) { return m; },
+                        formatResult: function(data) { return data.recent ? '<strong>' + data.name + '</strong>' : data.name; },
+                        formatSelection: function(data) { return data.name; },
+                        formatNoMatches: function (term) { return "${message(code: 'crmContact.search.noresult', default: 'Inga träffar')}"; },
+                        formatInputTooShort: function (input, min) { return "${message(code: 'crmContact.search.noresult', default: 'Skriv in början på namnet eller använd wildcard')}"; },
+                        formatInputTooLong: function (input, max) { return "${message(code: 'crmContact.search.noresult', default: 'Skriv in början på namnet eller använd wildcard')}"; },
+                        formatLoadMore: function (pageNumber) { return "${message(code: 'crmContact.search.loading', default: 'Laddar fler resultat…')}"; },
+                        formatSearching: function () { return "${message(code: 'crmContact.search.searching', default: 'Söker…')}"; }
+                    });
+
                     $modal.modal('show');
                 });
             });
@@ -334,39 +370,12 @@
     <g:form>
         <g:hiddenField name="id" value="${crmContact?.id}"/>
         <div class="form-actions btn-toolbar">
-
             <crm:hasPermission permission="crmContact:create">
-                <div class="btn-group">
-                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
-                        <g:message code="crmContactRelation.button.create.label"/>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" id="add-relation">
-                        <li>
-                            <g:link action="addRelation" id="${crmContact.id}">
-                                Skapa relation till befintligt företag
-                            </g:link>
-                        </li>
-                        <li>
-                            <g:link action="addRelation" id="${crmContact.id}">
-                                Skapa relation till befintlig person
-                            </g:link>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <g:link action="addRelation" id="${crmContact.id}">
-                                Skapa relation till nytt företag
-                            </g:link>
-                        </li>
-                        <li>
-                            <g:link action="addRelation" id="${crmContact.id}">
-                                Skapa relation till ny person
-                            </g:link>
-                        </li>
-                    </ul>
-                </div>
+                <g:link action="addRelation" id="${crmContact.id}" class="btn btn-success" elementId="add-relation">
+                    <i class="icon-resize-small icon-white"></i>
+                    <g:message code="crmContactRelation.create.label" default="Add Relation"/>
+                </g:link>
             </crm:hasPermission>
-
         </div>
     </g:form>
 </div>
@@ -411,31 +420,6 @@
                 code="default.button.close.label" default="Close"/></a>
     </div>
 
-</div>
-
-<div class="modal hide fade" id="editModal">
-    <g:form action="changeParent">
-
-        <input type="hidden" name="id" value="${crmContact.id}"/>
-        <input type="hidden" name="version" value="${crmContact.version}"/>
-
-        <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
-
-            <h3><g:message code="crmContact.change.parent.title" default="Change parent" args="${[crmContact]}"/></h3>
-        </div>
-
-        <div class="modal-body"><!-- This space is loaded by crmContact/changeParent --></div>
-
-        <div class="modal-footer">
-            <crm:button action="changeParent" visual="success" icon="icon-ok icon-white"
-                        label="crmContact.button.change.parent.accept" default="Accept"/>
-            <g:link class="btn btn-primary" action="index"><i class="icon-search icon-white"></i> <g:message
-                    code="crmContact.find.label" default="Find"/></g:link>
-            <a href="#" class="btn" data-dismiss="modal"><i class="icon-remove"></i> <g:message
-                    code="default.button.close.label" default="Close"/></a>
-        </div>
-    </g:form>
 </div>
 
 </body>

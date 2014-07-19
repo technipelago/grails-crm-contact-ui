@@ -132,29 +132,41 @@ class CrmContactController {
     }
 
     def export() {
-        def user = crmSecurityService.getUserInfo(crmSecurityService.currentUser?.username)
-        def filename = message(code: 'crmContact.label', default: 'Contact')
-        try {
-            def result = event(for: "crmContact", topic: "export",
-                    data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(60000)?.value
-            if (result?.file) {
-                try {
-                    WebUtils.inlineHeaders(response, result.contentType ?: "application/vnd.ms-excel", result.filename ?: filename)
-                    WebUtils.renderFile(response, result.file)
-                } finally {
-                    result.file.delete()
+        def user = crmSecurityService.getUserInfo()
+        if(request.post) {
+            def filename = message(code: 'crmContact.label', default: 'Contact')
+            try {
+                def namespace = params.namespace ?: 'crmContact'
+                def topic = params.topic ?: 'export'
+                def result = event(for: namespace, topic: topic,
+                        data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(60000)?.value
+                if (result?.file) {
+                    try {
+                        WebUtils.inlineHeaders(response, result.contentType, result.filename ?: namespace)
+                        WebUtils.renderFile(response, result.file)
+                    } finally {
+                        result.file.delete()
+                    }
+                    return null // Success
+                } else {
+                    flash.warning = message(code: 'crmContact.export.nothing.message', default: 'Nothing was exported')
                 }
-                return null // Success
-            } else {
-                flash.warning = message(code: 'crmContact.export.nothing.message', default: 'Nothing was exported')
+            } catch (TimeoutException te) {
+                flash.error = message(code: 'crmContact.export.timeout.message', default: 'Export did not complete')
+            } catch (Exception e) {
+                log.error("Export event throwed an exception", e)
+                flash.error = message(code: 'crmContact.export.error.message', default: 'Export failed due to an error', args: [e.message])
             }
-        } catch (TimeoutException te) {
-            flash.error = message(code: 'crmContact.export.timeout.message', default: 'Export did not complete')
-        } catch (Exception e) {
-            log.error("Export event throwed an exception", e)
-            flash.error = message(code: 'crmContact.export.error.message', default: 'Export failed due to an error', args: [e.message])
+            redirect(action: "index")
+        } else {
+            def baseURI = new URI('bean://crmContactService/list')
+            def query = params.getSelectionQuery()
+            def uri = selectionService.addQuery(baseURI, query)
+
+            def layouts = event(for: 'crmContact', topic: 'exportLayout',
+                    data: [tenant: TenantUtils.tenant, username: user.username, uri: uri]).waitFor(10000)?.values
+            [layouts: layouts, selection: uri]
         }
-        redirect(action: "index")
     }
 
     def create() {
@@ -586,7 +598,7 @@ class CrmContactController {
         redirect(action: 'show', id: id)
     }
 
-    def addRelation(Long id, String type, boolean primary,  String description) {
+    def addRelation(Long id, String type, boolean primary, String description) {
         def crmContact = crmContactService.getContact(id)
         if (!crmContact) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND)
@@ -611,9 +623,11 @@ class CrmContactController {
             redirect(action: 'show', id: id, fragment: "relations")
         } else {
             def relation = new CrmContactRelation(a: crmContact)
-            def existing = crmContact.getRelations().collect{it.getRelated(crmContact).id}
+            def existing = crmContact.getRelations().collect { it.getRelated(crmContact).id }
             existing << crmContact.id
-            def recentContacts = recentDomainService.getHistory(request, CrmContact)?.findAll { ! existing.contains(it.id) }
+            def recentContacts = recentDomainService.getHistory(request, CrmContact)?.findAll {
+                !existing.contains(it.id)
+            }
             render template: 'addRelation', model: [bean: relation, crmContact: crmContact,
                     relationTypes: crmContactService.listRelationType(null), recentContacts: recentContacts]
         }
@@ -634,7 +648,7 @@ class CrmContactController {
             CrmContactRelation.withTransaction {
                 bindData(relation, params, [include: ['type', 'primary', 'description']])
                 relation.save()
-                if(params.boolean('primary')) {
+                if (params.boolean('primary')) {
                     crmContactService.setPrimaryRelation(relation)
                 }
             }
@@ -765,8 +779,8 @@ class CrmContactController {
 
     def autocompleteCompany(Long id) {
         def result = listCompanies(params.q, params.int('limit'))
-        if(id) {
-            result = result.findAll{it[1] != id}
+        if (id) {
+            result = result.findAll { it[1] != id }
         }
         WebUtils.noCache(response)
         render result as JSON

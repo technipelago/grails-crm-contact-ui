@@ -17,7 +17,7 @@
     <thead>
     <tr>
         <th style="white-space: nowrap;">${message(code: 'crmContact.name.label', default: 'Name')}</th>
-        <th style="white-space: nowrap;">${message(code: 'crmContact.parent.label', default: 'Relation')}</th>
+        <th style="white-space: nowrap;">${message(code: 'crmContact.related.label', default: 'Relation')}</th>
         <th style="white-space: nowrap;">${message(code: 'crmContact.telephone.label', default: 'Telephone')}</th>
         <th style="white-space: nowrap;">${message(code: 'crmContact.address.label', default: 'Address')}</th>
         <th style="white-space: nowrap;">${message(code: 'crmContact.username.label', default: 'Responsible')}</th>
@@ -27,7 +27,7 @@
     <g:each in="${crmContactList}" var="crmContact" status="i">
         <tr style="${(i % 2) ? '' : 'background-color:#f3f3f3;'}">
             <td>${fieldValue(bean: crmContact, field: "name")}</td>
-            <td>${fieldValue(bean: crmContact, field: "parent")}</td>
+            <td>${fieldValue(bean: crmContact, field: "primaryContact")}</td>
             <td style="white-space: nowrap;">${fieldValue(bean: crmContact, field: "preferredPhone")}</td>
             <td>${fieldValue(bean: crmContact, field: "address")}</td>
             <td><crm:user username="${crmContact.username}">${name}</crm:user></td>

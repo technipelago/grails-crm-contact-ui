@@ -5,7 +5,7 @@
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'crmContact.label', default: 'Contact')}"/>
     <title><g:message code="crmContact.edit.title" args="[entityName, crmContact]"/></title>
-    <r:require modules="googleMaps,autocomplete,select2"/>
+    <r:require modules="googleMaps,autocomplete"/>
     <r:script>
         function addCategoryInput() {
             var $div = $('<div class="row-fluid"/>');

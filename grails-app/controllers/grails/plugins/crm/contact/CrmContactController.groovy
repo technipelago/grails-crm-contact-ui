@@ -159,10 +159,7 @@ class CrmContactController {
             }
             redirect(action: "index")
         } else {
-            def baseURI = new URI('bean://crmContactService/list')
-            def query = params.getSelectionQuery()
-            def uri = selectionService.addQuery(baseURI, query)
-
+            def uri = params.getSelectionURI()
             def layouts = event(for: 'crmContact', topic: 'exportLayout',
                     data: [tenant: TenantUtils.tenant, username: user.username, uri: uri]).waitFor(10000)?.values
             [layouts: layouts, selection: uri]
@@ -369,7 +366,6 @@ class CrmContactController {
         withFormat {
             html {
                 def externalLink = [:]
-                def targetContact
                 if (crmContact.company) {
                     def externalInfoLink = grailsApplication.config.crm.company.external.info.link
                     if (externalInfoLink) {
@@ -381,11 +377,9 @@ class CrmContactController {
                             externalLink.link = externalInfoLink.toString()
                         }
                     }
-                    targetContact = recentDomainService.getHistory(request, CrmContact, 'changeParent')?.find { it }
                 }
-
                 return [crmContact: crmContact, children: crmContact.children ?: Collections.EMPTY_LIST, relations: crmContact.relations, primaryRelation: crmContact.primaryRelation,
-                        externalLink: externalLink, targetContact: targetContact, selection: params.getSelectionURI()]
+                        externalLink: externalLink, selection: params.getSelectionURI()]
             }
             json {
                 render crmContact.dao as JSON
@@ -532,46 +526,6 @@ class CrmContactController {
                 flash.success = message(code: 'crmContact.change.type.message', args: [crmContact.toString(), newType], default: 'Contact type changed to {0}')
             }
             redirect(action: 'show', id: id)
-        }
-    }
-
-    def changeParent(Long id) {
-        def crmContact = crmContactService.getContact(id)
-        switch (request.method) {
-            case 'GET':
-                if (crmContact) {
-                    rememberDomain(crmContact, 'changeParent')
-                    def classLoader = grailsApplication.classLoader
-                    def possibleParents = recentDomainService.getHistory(request, CrmContact).collect {
-                        it.getObject(classLoader)
-                    }.findAll {
-                        if (it != null) {
-                            return it.company && (it.id != crmContact.id) && (it.id != crmContact.parent?.id)
-                        }
-                        return false
-                    }
-                    render template: 'changeParentModal', model: [crmContact: crmContact, companyList: possibleParents]
-                } else {
-                    flash.error = message(code: 'crmContact.not.found.message', args: [message(code: 'crmContact.label', default: 'Contact'), id])
-                    redirect action: 'index'
-                }
-                break
-            case 'POST':
-                if (params['parent.id']) {
-                    def oldParent = crmContact.parent
-                    bindData(crmContact, params, [include: ['parent']])
-                    if (crmContact.validate() && crmContact.save()) {
-                        forgetDomain(crmContact, 'changeParent')
-                        event(for: "crmContact", topic: "changedParent",
-                                data: [crmContact: crmContact.id, oldParent: oldParent?.id, username: crmSecurityService.currentUser?.username])
-                        flash.success = message(code: 'crmContact.change.parent.success', args: [crmContact.toString(), crmContact.parent?.toString()])
-                    } else {
-                        log.error(crmContact.errors.toString())
-                        flash.error = message(code: 'crmContact.change.parent.error', args: [crmContact.toString()])
-                    }
-                }
-                redirect(action: 'show', id: id)
-                break
         }
     }
 

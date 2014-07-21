@@ -18,7 +18,7 @@ import grails.plugins.crm.contact.CrmContact
 
 class CrmContactUiGrailsPlugin {
     def groupId = ""
-    def version = "2.0.0-SNAPSHOT"
+    def version = "2.0.0"
     def grailsVersion = "2.2 > *"
     def dependsOn = [:]
     def loadAfter = ['crmContact']
@@ -30,7 +30,7 @@ class CrmContactUiGrailsPlugin {
     def author = "Goran Ehrsson"
     def authorEmail = "goran@technipelago.se"
     def description = '''
-Provides contact management user interface for GR8 CRM applications.
+This plugin extends crm-contact and provides contact management user interface for GR8 CRM applications.
 '''
     def documentation = "http://gr8crm.github.io/plugins/crm-contact-ui/"
     def license = "APACHE"
@@ -74,7 +74,7 @@ Provides contact management user interface for GR8 CRM applications.
         def crmPluginService = applicationContext.crmPluginService
         crmPluginService.registerView('crmMessage', 'index', 'tabs',
                 [id: "crmContact", index: 100, label: "crmContact.label",
-                        template: '/crmContact/messages', plugin: "crm-contact-lite"]
+                        template: '/crmContact/messages', plugin: "crm-contact-ui"]
         )
 
         // Add contact button in main menu.

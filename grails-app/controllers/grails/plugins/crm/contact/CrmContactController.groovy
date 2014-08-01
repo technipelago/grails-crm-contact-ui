@@ -103,40 +103,12 @@ class CrmContactController {
         redirect(action: 'index')
     }
 
-    def print() {
-        def user = crmSecurityService.currentUser
-        try {
-            def tempFile = event(for: "crmContact", topic: "print", data: params + [report: 'list', user: user, tenant: TenantUtils.tenant]).waitFor(60000)?.value
-            if (tempFile instanceof File) {
-                try {
-                    def filename = message(code: 'crmContact.label', default: 'Contact') + '.pdf'
-                    WebUtils.inlineHeaders(response, "application/pdf", filename)
-                    WebUtils.renderFile(response, tempFile)
-                } finally {
-                    tempFile.delete()
-                }
-                return null // Success
-            } else if (tempFile) {
-                log.error("Print event returned an unexpected value: $tempFile (${tempFile.class.name})")
-                flash.error = message(code: 'crmContact.print.error.message', default: 'Printing failed due to an error', args: [tempFile.class.name])
-            } else {
-                flash.warning = message(code: 'crmContact.print.nothing.message', default: 'Nothing was printed')
-            }
-        } catch (TimeoutException te) {
-            flash.error = message(code: 'crmContact.print.timeout.message', default: 'Printing did not complete')
-        } catch (Exception e) {
-            log.error("Print event throwed an exception", e)
-            flash.error = message(code: 'crmContact.print.error.message', default: 'Printing failed due to an error', args: [e.message])
-        }
-        redirect(action: "index") // error condition, return to search form.
-    }
-
     def export() {
         def user = crmSecurityService.getUserInfo()
+        def namespace = params.namespace ?: 'crmContact'
         if (request.post) {
             def filename = message(code: 'crmContact.label', default: 'Contact')
             try {
-                def namespace = params.namespace ?: 'crmContact'
                 def topic = params.topic ?: 'export'
                 def result = event(for: namespace, topic: topic,
                         data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(60000)?.value
@@ -160,8 +132,8 @@ class CrmContactController {
             redirect(action: "index")
         } else {
             def uri = params.getSelectionURI()
-            def layouts = event(for: 'crmContact', topic: 'exportLayout',
-                    data: [tenant: TenantUtils.tenant, username: user.username, uri: uri]).waitFor(10000)?.values
+            def layouts = event(for: namespace, topic: (params.topic ?: 'exportLayout'),
+                    data: [tenant: TenantUtils.tenant, username: user.username, uri: uri]).waitFor(10000)?.values?.flatten()
             [layouts: layouts, selection: uri]
         }
     }

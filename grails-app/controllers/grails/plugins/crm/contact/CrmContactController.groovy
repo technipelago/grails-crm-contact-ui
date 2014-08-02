@@ -753,7 +753,7 @@ class CrmContactController {
 
         // Append most recent viewed contacts.
         def recentContacts = recentDomainService.getHistory(request, CrmContact)?.findAll { handle ->
-            handle.id != id && !result.find { it.id == handle.id }
+            handle.object != null && handle.id != id && !result.find { it.id == handle.id }
         }.collect {
             def obj = it.object
             [id: it.id, name: obj.fullName, address: obj.address.toString(), recent: true]

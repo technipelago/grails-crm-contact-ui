@@ -115,7 +115,7 @@
 
                         <div class="span4">
                             <g:unless test="${crmContact.parent}">
-                                <f:field property="parent" label="crmContact.parent.label">
+                                <f:field property="parent" label="crmContact.company.label">
                                     <input type="text" name="parentName" id="parent"
                                            value="${crmContact.parent?.name}"
                                            class="span11" autocomplete="off"/>

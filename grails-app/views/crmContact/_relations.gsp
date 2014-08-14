@@ -1,3 +1,4 @@
+<%@ page import="org.apache.commons.lang.StringUtils" %>
 <table id="relations-list" class="table table-striped">
     <thead>
     <tr>
@@ -69,7 +70,7 @@
                     ${fieldValue(bean: relation, field: "type")}
                 </a>
                 <g:if test="${relation.description}">
-                    <i class="icon-comment"></i>
+                    <i class="icon-comment" title="${StringUtils.abbreviate(relation.description, 80).encodeAsHTML()}"></i>
                 </g:if>
             </td>
         <!--

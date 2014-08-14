@@ -14,7 +14,7 @@
 
     <div class="modal-body">
         <div class="control-group">
-            <label class="control-label">Typ av relation</label>
+            <label class="control-label"><g:message code="crmContactRelation.type.label"/></label>
 
             <div class="controls">
                 <g:select name="type.id" value="${bean.type.id}" from="${relationTypes}" optionKey="id" class="input-large"/>
@@ -24,12 +24,12 @@
         <div class="control-group">
             <label class="checkbox">
                 <g:checkBox name="primary" value="true" checked="${bean.primary}"/>
-                Primär relation
+                <g:message code="crmContactRelation.primary.label"/>
             </label>
         </div>
 
         <div class="control-group">
-            <label class="control-label">Beskrivning</label>
+            <label class="control-label"><g:message code="crmContactRelation.description.label"/></label>
 
             <div class="controls">
                 <g:textArea name="description" value="${bean.description}" cols="70" rows="3" class="input-xlarge"/>

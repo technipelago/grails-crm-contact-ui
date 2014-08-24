@@ -29,28 +29,6 @@ class CrmContactController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], find: 'POST', delete: 'POST', deleteRelation: 'POST']
 
-    static navigation = [
-            [group: 'crmContact',
-                    order: 10,
-                    title: 'crmContact.edit',
-                    action: 'edit',
-                    isVisible: { actionName == 'show' },
-                    id: { params.id }
-            ],
-            [group: 'crmContact',
-                    order: 20,
-                    title: 'crmContact.create',
-                    action: 'create',
-                    isVisible: { actionName != 'create' }
-            ],
-            [group: 'crmContact',
-                    order: 30,
-                    title: 'crmContact.find',
-                    action: 'index',
-                    isVisible: { actionName != 'index' }
-            ]
-    ]
-
     def crmContactService
     def crmTagService
     def crmSecurityService

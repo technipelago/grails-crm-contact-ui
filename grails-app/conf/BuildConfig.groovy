@@ -35,7 +35,7 @@ grails.project.dependency.resolution = {
         }
 
         compile(":qrcode:0.6")
-        compile ":selection:0.9.7"
+        compile ":selection:0.9.8"
         compile ":sequence-generator:1.0"
         compile ":selection-repository:0.9.3"
         compile ":recent-domain:0.6.0"

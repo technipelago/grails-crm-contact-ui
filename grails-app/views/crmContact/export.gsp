@@ -10,7 +10,7 @@
 
 <crm:header title="crmContact.export.title" subtitle="crmContact.export.subtitle" args="[entityName]"/>
 
-<g:each in="${layouts}" var="l">
+<g:each in="${layouts?.sort{it.name}}" var="l">
     <g:form action="export" class="well">
         <input type="hidden" name="q" value="${select.encode(selection: selection)}"/>
         <input type="hidden" name="namespace" value="${l.namespace}"/>

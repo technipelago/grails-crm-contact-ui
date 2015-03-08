@@ -141,7 +141,7 @@
 
                         <div class="span4">
                             <f:field property="number">
-                                <input type="text" name="number" id="number" value="${crmContact.number}"
+                                <g:textField name="number" value="${crmContact.number}"
                                        novalidate="" autocomplete="off" class="span8"/>
                             </f:field>
                             <f:field property="ssn" label="crmCompany.ssn.label" input-class="span8"/>

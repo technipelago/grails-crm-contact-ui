@@ -54,7 +54,7 @@
     </crm:alert>
 </g:hasErrors>
 
-<g:form action="company">
+<g:form action="person">
     <g:hiddenField name="referer" id="hiddenReferer" value="${referer}"/>
 
     <div class="tabbable">
@@ -100,7 +100,7 @@
                         <div class="span4">
                             <div class="row-fluid">
                                 <f:field property="number">
-                                    <input type="text" name="number" id="number" value="${crmContact.number}"
+                                    <g:textField name="number" value="${crmContact.number}"
                                            novalidate="" autocomplete="off" class="input-medium"/>
                                 </f:field>
                                 <f:field property="ssn" label="crmPerson.ssn.label" input-class="input-medium"/>

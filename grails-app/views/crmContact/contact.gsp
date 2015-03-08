@@ -53,9 +53,6 @@
             var tab = $(ev.target.hash);
             $(":input[type='text']:visible:enabled:first", tab).focus();
         });
-
-        $("#firstName").focus();
-        $("#parent").focus();
     });
     </r:script>
 </head>
@@ -116,15 +113,15 @@
                         <div class="span4">
                             <g:unless test="${crmContact.parent}">
                                 <f:field property="parent" label="crmContact.company.label">
-                                    <input type="text" name="parentName" id="parent"
-                                           value="${crmContact.parent?.name}"
-                                           class="span11" autocomplete="off"/>
+                                        <g:textField name="parentName" id="parent"
+                                               value="${crmContact.parent?.name}"
+                                               class="span11" autocomplete="off" autofocus=""/>
                                 </f:field>
                             </g:unless>
                             <input type="hidden" name="parent.id" id="parent-id"
                                    value="${crmContact.parent?.id}"/>
                             <f:field property="firstName" label="crmContact.firstName.label" input-class="span11"
-                                     required=""/>
+                                     required="" autofocus=""/>
                             <f:field property="lastName" label="crmContact.lastName.label" input-class="span11"/>
                             <f:field property="title" label="crmContact.title.label" input-class="span11"/>
                         </div>
@@ -137,7 +134,7 @@
 
                         <div class="span4">
                             <f:field property="number">
-                                <input type="text" name="number" id="number" value="${crmContact.number}"
+                                <g:textField name="number" value="${crmContact.number}"
                                        novalidate="" autocomplete="off" class="input-medium"/>
                             </f:field>
                             <f:field property="ssn" label="crmPerson.ssn.label" input-class="input-medium"/>

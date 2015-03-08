@@ -1,5 +1,7 @@
+import grails.plugins.crm.contact.CrmContact
+
 /*
- * Copyright 2012 Goran Ehrsson.
+ * Copyright 2015 Goran Ehrsson.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +16,9 @@
  * limitations under the License.
  */
 
-import grails.plugins.crm.contact.CrmContact
-
 class CrmContactUiGrailsPlugin {
     def groupId = ""
-    def version = "2.0.1-SNAPSHOT"
+    def version = "2.4.0-SNAPSHOT"
     def grailsVersion = "2.2 > *"
     def dependsOn = [:]
     def loadAfter = ['crmContact']
@@ -37,6 +37,37 @@ This plugin extends crm-contact and provides contact management user interface f
     def organization = [name: "Technipelago AB", url: "http://www.technipelago.se/"]
     def issueManagement = [system: "github", url: "https://github.com/technipelago/grails-crm-contact-ui/issues"]
     def scm = [url: "https://github.com/technipelago/grails-crm-contact-ui"]
+
+    def features = {
+        crmContact {
+            description "Contact Management"
+            link controller: 'crmContact'
+            permissions {
+                guest "crmContact:index,list,show,createFavorite,deleteFavorite,clearQuery,qrcode,autocompleteTitle,autocompleteCategoryType,autocompleteTags", "qrcode:*"
+                partner "crmContact:index,list,show,createFavorite,deleteFavorite,clearQuery,qrcode,autocompleteTitle,autocompleteCategoryType,autocompleteTags", "qrcode:*"
+                user "crmContact:*", "qrcode:*"
+                admin "crmContact,crmAddressType,crmContactCategoryType,crmContactRelationType:*", "qrcode:*"
+            }
+            statistics {tenant ->
+                def total = CrmContact.countByTenantId(tenant)
+                def updated = CrmContact.countByTenantIdAndLastUpdatedGreaterThan(tenant, new Date() - 31)
+                def usage
+                if (total > 0) {
+                    def tmp = updated / total
+                    if (tmp < 0.1) {
+                        usage = 'low'
+                    } else if (tmp < 0.3) {
+                        usage = 'medium'
+                    } else {
+                        usage = 'high'
+                    }
+                } else {
+                    usage = 'none'
+                }
+                return [usage: usage, objects: total]
+            }
+        }
+    }
 
     def doWithApplicationContext = { applicationContext ->
         // Add a i18n admin page for this plugin's labels and messages.

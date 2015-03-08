@@ -19,7 +19,7 @@ package grails.plugins.crm.contact
 /**
  * Test decorators/CrmAgreementDecorator.groovy
  */
-class CrmContactDecoratorSpec extends grails.plugin.spock.IntegrationSpec {
+class CrmContactDecoratorSpec extends grails.test.spock.IntegrationSpec {
 
     def grailsApplication
     def crmContactService

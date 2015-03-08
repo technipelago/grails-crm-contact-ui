@@ -24,7 +24,9 @@ import grails.converters.XML
 
 import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.TimeoutException
+import grails.transaction.Transactional
 
+@Transactional(readOnly = true)
 class CrmContactController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], find: 'POST', delete: 'POST', deleteRelation: 'POST']
@@ -138,6 +140,7 @@ class CrmContactController {
         return userList
     }
 
+    @Transactional
     def company() {
         def tenant = TenantUtils.tenant
         def crmContact = new CrmContact()
@@ -154,16 +157,12 @@ class CrmContactController {
                 return [user: user, crmContact: crmContact, addressTypes: addressTypes, userList: userList, referer: params.referer]
             case 'POST':
                 bindCategories(crmContact, params.list('category').findAll { it.trim() })
-                for (a in crmContact.addresses.findAll { it.empty }) {
-                    crmContact.removeFromAddresses(a)
-                    if (a.id) {
-                        a.delete()
-                    }
-                }
+                bindAddresses(crmContact, params)
+
                 if (!crmContact.save()) {
                     def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
                     render(view: 'company', model: [user: user, crmContact: crmContact,
-                            addressTypes: crmContact.addresses*.type, userList: userList, referer: params.referer])
+                            addressTypes: crmContact.addresses ? crmContact.addresses*.type : addressTypes, userList: userList, referer: params.referer])
                     return
                 }
                 flash.success = message(code: 'default.created.message', args: [message(code: 'crmContact.label', default: 'Company'), crmContact.toString()])
@@ -176,6 +175,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def contact() {
         def tenant = TenantUtils.tenant
         def crmContact = new CrmContact()
@@ -197,61 +197,51 @@ class CrmContactController {
             case 'POST':
                 def createPerson = (crmContact.firstName || crmContact.lastName)
                 def problem = null
-                CrmContact.withTransaction { tx ->
-                    if (params.parentName && !parentContact) {
-                        parentContact = new CrmContact()
-                        bindData(parentContact, params, [include: ['telephone', 'addresses']])
-                        parentContact.name = params.parentName
-                        parentContact.tenantId = tenant
-                        for (a in parentContact.addresses.findAll { it.empty }) {
-                            parentContact.removeFromAddresses(a)
-                            if (a.id) {
-                                a.delete()
-                            }
-                        }
-                        // If we don't create a person, put the description on the company.
-                        if (!createPerson) {
-                            parentContact.description = params.description
-                        }
-                        if (parentContact.save()) {
-                            crmContact.addresses?.clear()
-                        } else {
-                            problem = parentContact
-                        }
+                if (params.parentName && !parentContact) {
+                    parentContact = new CrmContact()
+                    bindData(parentContact, params, [include: ['telephone']])
+                    parentContact.name = params.parentName
+                    parentContact.tenantId = tenant
+                    bindAddresses(parentContact, params)
+
+                    // If we don't create a person, put the description on the company.
+                    if (!createPerson) {
+                        parentContact.description = params.description
+                    }
+                    if (parentContact.save()) {
+                        crmContact.addresses?.clear()
                     } else {
-                        for (a in crmContact.addresses?.findAll { it.empty }) {
-                            crmContact.removeFromAddresses(a)
-                            if (a.id) {
-                                a.delete()
-                            }
-                        }
+                        problem = parentContact
                     }
-
-                    // If no username is specified, copy username from parent contact.
-                    if ((!crmContact.username) && parentContact?.username) {
-                        crmContact.username = parentContact.username
-                    }
-
-                    if (createPerson) {
-                        if (problem) {
-                            crmContact.validate()
-                        } else if (!crmContact.save()) {
-                            problem = crmContact
-                        }
-                        if (problem) {
-                            crmContact.discard()
-                            parentContact?.discard()
-                            parentContact = null
-                            tx.setRollbackOnly()
-                        } else if (parentContact) {
-                            crmContactService.addRelation(crmContact, parentContact, null, true)
-                        }
-                    } else if (parentContact) {
-                        crmContact.discard()
-                        crmContact = parentContact
-                        parentContact = null
-                    }
+                } else {
+                    bindAddresses(crmContact, params)
                 }
+
+                // If no username is specified, copy username from parent contact.
+                if ((!crmContact.username) && parentContact?.username) {
+                    crmContact.username = parentContact.username
+                }
+
+                if (createPerson) {
+                    if (problem) {
+                        crmContact.validate()
+                    } else if (!crmContact.save()) {
+                        problem = crmContact
+                    }
+                    if (problem) {
+                        crmContact.discard()
+                        parentContact?.discard()
+                        parentContact = null
+                        tx.setRollbackOnly()
+                    } else if (parentContact) {
+                        crmContactService.addRelation(crmContact, parentContact, null, true)
+                    }
+                } else if (parentContact) {
+                    crmContact.discard()
+                    crmContact = parentContact
+                    parentContact = null
+                }
+
                 if (problem) {
                     render(view: 'contact', model: [user: user, crmContact: crmContact, parentContact: parentContact,
                             addressTypes: problem.addresses*.type, userList: userList, referer: params.referer])
@@ -267,6 +257,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def person() {
         def tenant = TenantUtils.tenant
         def crmContact = new CrmContact()
@@ -284,12 +275,8 @@ class CrmContactController {
                 return [user: user, crmContact: crmContact, addressTypes: addressTypes,
                         userList: userList, referer: params.referer]
             case 'POST':
-                for (a in crmContact.addresses.findAll { it.empty }) {
-                    crmContact.removeFromAddresses(a)
-                    if (a.id) {
-                        a.delete()
-                    }
-                }
+                bindAddresses(crmContact, params)
+
                 if (!crmContact.save()) {
                     render(view: 'person', model: [user: user, crmContact: crmContact,
                             addressTypes: crmContact.addresses*.type, userList: userList, referer: params.referer])
@@ -340,6 +327,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def edit(Long id) {
         def tenant = TenantUtils.tenant
         def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
@@ -375,13 +363,8 @@ class CrmContactController {
 
                 bindData(crmContact, params)
                 bindCategories(crmContact, params.list('category').findAll { it.trim() })
+                bindAddresses(crmContact, params)
 
-                for (a in crmContact.addresses.findAll { it.empty }) {
-                    crmContact.removeFromAddresses(a)
-                    if (a.id) {
-                        a.delete()
-                    }
-                }
                 if (!crmContact.save()) {
                     return [user: user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
                             titleList: listDistinctTitle(), userList: userList, referer: params.referer]
@@ -390,6 +373,34 @@ class CrmContactController {
                 flash.success = message(code: 'default.updated.message', args: [message(code: 'crmContact.label', default: 'Contact'), crmContact.toString()])
                 redirect(action: "show", id: crmContact.id)
                 break
+        }
+    }
+
+    private void bindAddresses(CrmContact crmContact, Map params) {
+        // This is a workaround for Grails 2.4.4 data binding that does not insert a new CrmContactAddress when 'id' is null.
+        // I consider this to be a bug in Grails 2.4.4 but I'm not sure how it's supposed to work with Set.
+        // This workaround was not needed in Grails 2.2.4.
+        for(i in 0..10) {
+            def a = params["addresses[$i]".toString()]
+            if(a && ! a.id) {
+                def ca = new CrmContactAddress(contact: crmContact)
+                bindData(ca, a)
+                if(! ca.isEmpty()) {
+                    if(ca.validate()) {
+                        crmContact.addToAddresses(ca)
+                    } else {
+                        crmContact.errors.addAllErrors(ca.errors)
+                    }
+                }
+            }
+        }
+
+        // Remove existing addresses were all properties are blank.
+        for (a in crmContact.addresses.findAll { it?.empty }) {
+            crmContact.removeFromAddresses(a)
+            if (a.id) {
+                a.delete()
+            }
         }
     }
 
@@ -421,6 +432,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def delete(Long id) {
         def crmContact = crmContactService.getContact(id)
         if (!crmContact) {
@@ -440,6 +452,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def changeType(Long id) {
         def crmContact = crmContactService.getContact(id)
         if (!crmContact) {
@@ -447,40 +460,38 @@ class CrmContactController {
             redirect action: 'index'
             return
         }
-        CrmContact.withTransaction { tx ->
-            if (crmContact.company) {
-                if (crmContact.children) {
-                    flash.error = message(code: 'crmContact.change.type.children.message', args: [message(code: 'crmContact.label', default: 'Contact'), id])
-                    redirect(action: 'show', id: id)
-                    return
-                }
-                def names = fixFirstLastName([firstName: crmContact.name])
-                crmContact.firstName = names.firstName
-                crmContact.lastName = names.lastName
-                crmContact.name = null
-                // Remove all categories.
-                def removeUs = []
-                removeUs.addAll(crmContact.categories)
-                for (c in removeUs) {
-                    crmContact.removeFromCategories(c)
-                    c.delete()
-                }
-            } else {
-                crmContact.firstName = null
-                crmContact.lastName = null
-                // Move mobile number to telephone number field since mobile is not available for companies.
-                if (crmContact.mobile && !crmContact.telephone) {
-                    crmContact.telephone = crmContact.mobile
-                    crmContact.mobile = null
-                }
-                // name is already set to firstName + ' ' + lastName
+        if (crmContact.company) {
+            if (crmContact.children) {
+                flash.error = message(code: 'crmContact.change.type.children.message', args: [message(code: 'crmContact.label', default: 'Contact'), id])
+                redirect(action: 'show', id: id)
+                return
             }
-            if (crmContact.validate() && crmContact.save()) {
-                def newType = crmContact.company ? message(code: 'crmCompany.label', default: 'Company') : message(code: 'crmPerson.label', default: 'Person')
-                flash.success = message(code: 'crmContact.change.type.message', args: [crmContact.toString(), newType], default: 'Contact type changed to {0}')
+            def names = fixFirstLastName([firstName: crmContact.name])
+            crmContact.firstName = names.firstName
+            crmContact.lastName = names.lastName
+            crmContact.name = null
+            // Remove all categories.
+            def removeUs = []
+            removeUs.addAll(crmContact.categories)
+            for (c in removeUs) {
+                crmContact.removeFromCategories(c)
+                c.delete()
             }
-            redirect(action: 'show', id: id)
+        } else {
+            crmContact.firstName = null
+            crmContact.lastName = null
+            // Move mobile number to telephone number field since mobile is not available for companies.
+            if (crmContact.mobile && !crmContact.telephone) {
+                crmContact.telephone = crmContact.mobile
+                crmContact.mobile = null
+            }
+            // name is already set to firstName + ' ' + lastName
         }
+        if (crmContact.validate() && crmContact.save()) {
+            def newType = crmContact.company ? message(code: 'crmCompany.label', default: 'Company') : message(code: 'crmPerson.label', default: 'Person')
+            flash.success = message(code: 'crmContact.change.type.message', args: [crmContact.toString(), newType], default: 'Contact type changed to {0}')
+        }
+        redirect(action: 'show', id: id)
     }
 
     private Map fixFirstLastName(final Map params) {
@@ -494,6 +505,7 @@ class CrmContactController {
         return params
     }
 
+    @Transactional
     def createFavorite(Long id) {
         def crmContact = crmContactService.getContact(id)
         if (!crmContact) {
@@ -506,6 +518,7 @@ class CrmContactController {
         redirect(action: 'show', id: params.id)
     }
 
+    @Transactional
     def deleteFavorite(Long id) {
         def crmContact = crmContactService.getContact(id)
         if (!crmContact) {
@@ -517,6 +530,7 @@ class CrmContactController {
         redirect(action: 'show', id: id)
     }
 
+    @Transactional
     def addRelation(Long id, String type, boolean primary, String description) {
         def crmContact = crmContactService.getContact(id)
         if (!crmContact) {
@@ -564,6 +578,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def editRelation(Long id, Long r) {
         def crmContact = crmContactService.getContact(id)
         def relation = CrmContactRelation.get(r)
@@ -576,12 +591,10 @@ class CrmContactController {
             return
         }
         if (request.post) {
-            CrmContactRelation.withTransaction {
-                bindData(relation, params, [include: ['type', 'primary', 'description']])
-                relation.save()
-                if (params.boolean('primary')) {
-                    crmContactService.setPrimaryRelation(relation)
-                }
+            bindData(relation, params, [include: ['type', 'primary', 'description']])
+            relation.save()
+            if (params.boolean('primary')) {
+                crmContactService.setPrimaryRelation(relation)
             }
             redirect(action: 'show', id: id, fragment: "relations")
         } else {
@@ -590,6 +603,7 @@ class CrmContactController {
         }
     }
 
+    @Transactional
     def deleteRelation(Long id, Long r) {
         def relation = CrmContactRelation.get(r)
         if (!relation) {

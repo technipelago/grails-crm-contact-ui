@@ -140,7 +140,7 @@
                                     <f:field property="name" input-autofocus="" required=""
                                              input-class="span12"/>
                                     <f:field property="parent">
-                                        <input type="hidden" name="parent.id" value="${crmContact.parentId}"/>
+                                        <g:hiddenField id="parent-id" name="parent.id" value="${crmContact.parentId}"/>
                                         <g:textField name="parent.name" value="${crmContact.parent?.name}" class="span11"/>
                                     </f:field>
                                     <f:field property="telephone" input-class="span7"/>

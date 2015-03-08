@@ -1,5 +1,5 @@
+<g:hiddenField name="${prefix ?: ''}addresses[${row}].id" id="ad${row}" value="${bean.id}"/>
 <g:hiddenField name="${prefix ?: ''}addresses[${row}].type.id" id="adt${row}" value="${bean.type?.id}"/>
-
 <g:hiddenField name="${prefix ?: ''}addresses[${row}].preferred" id="adp${row}" value="${row == 0}"/>
 
 <div class="control-group">

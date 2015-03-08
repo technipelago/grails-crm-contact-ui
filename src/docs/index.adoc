@@ -85,6 +85,11 @@ A simple but powerful address book integration!
 iOS does not have built-in support for scanning QRCode images, but you can download scanner apps from App Store.
 ====
 
+== Changes
+
+2.4.0:: First version compatible with Grails 2.4.4.
+2.0.0:: First public release.
+
 == License
 
 {license}

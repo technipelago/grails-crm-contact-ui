@@ -513,7 +513,7 @@ class CrmContactController {
             redirect action: 'index'
             return
         }
-        userTagService.tag(crmContact, grailsApplication.config.crm.tag.favorite, crmSecurityService.currentUser?.username, TenantUtils.tenant)
+        userTagService.tag(crmContact, getFavoriteTag(), crmSecurityService.currentUser?.username, TenantUtils.tenant)
 
         redirect(action: 'show', id: params.id)
     }
@@ -526,8 +526,12 @@ class CrmContactController {
             redirect action: 'index'
             return
         }
-        userTagService.untag(crmContact, grailsApplication.config.crm.tag.favorite, crmSecurityService.currentUser?.username, TenantUtils.tenant)
+        userTagService.untag(crmContact, getFavoriteTag(), crmSecurityService.currentUser?.username, TenantUtils.tenant)
         redirect(action: 'show', id: id)
+    }
+
+    private String getFavoriteTag() {
+        grailsApplication.config.crm.tag.favorite ?: 'favorite'
     }
 
     @Transactional

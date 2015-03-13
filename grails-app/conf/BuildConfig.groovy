@@ -45,7 +45,7 @@ grails.project.dependency.resolution = {
             excludes 'xercesImpl', 'xml-apis'
         }
 
-        compile(":qrcode:0.6")
+        compile(":qrcode:0.7")
         compile ":selection-repository:0.9.3"
         compile ":recent-domain:0.6.0"
         compile ":decorator:1.1"

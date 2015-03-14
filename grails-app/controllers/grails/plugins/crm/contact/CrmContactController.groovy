@@ -470,12 +470,14 @@ class CrmContactController {
             crmContact.firstName = names.firstName
             crmContact.lastName = names.lastName
             crmContact.name = null
-            // Remove all categories.
-            def removeUs = []
-            removeUs.addAll(crmContact.categories)
-            for (c in removeUs) {
-                crmContact.removeFromCategories(c)
-                c.delete()
+            if(crmContact.categories) {
+                // Remove all categories.
+                List removeUs = []
+                removeUs.addAll(crmContact.categories)
+                for (c in removeUs) {
+                    crmContact.removeFromCategories(c)
+                    c.delete()
+                }
             }
         } else {
             crmContact.firstName = null

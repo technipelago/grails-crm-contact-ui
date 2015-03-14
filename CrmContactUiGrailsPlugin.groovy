@@ -18,7 +18,7 @@ import grails.plugins.crm.contact.CrmContact
 
 class CrmContactUiGrailsPlugin {
     def groupId = ""
-    def version = "2.4.0-SNAPSHOT"
+    def version = "2.4.0"
     def grailsVersion = "2.2 > *"
     def dependsOn = [:]
     def loadAfter = ['crmContact']

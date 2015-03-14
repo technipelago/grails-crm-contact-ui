@@ -19,7 +19,6 @@ grails.project.dependency.resolution = {
     repositories {
         grailsCentral()
         mavenLocal()
-        mavenRepo "http://labs.technipelago.se/repo/plugins-releases-local/"
         mavenCentral()
     }
     dependencies {
@@ -51,8 +50,8 @@ grails.project.dependency.resolution = {
         compile ":decorator:1.1"
         compile ":user-tag:0.6"
 
-        compile ":crm-contact:2.4.0-SNAPSHOT"
-        compile ":crm-feature:2.4.0-SNAPSHOT"
-        compile ":crm-ui-bootstrap:2.4.0-SNAPSHOT"
+        compile ":crm-contact:2.4.0"
+        compile ":crm-feature:2.4.0"
+        compile ":crm-ui-bootstrap:2.4.0"
     }
 }

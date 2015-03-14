@@ -23,14 +23,6 @@ class CrmAddressTypeController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
-    static navigation = [
-            [group: 'admin',
-                    order: 410,
-                    title: 'crmAddressType.label',
-                    action: 'index'
-            ]
-    ]
-
     def selectionService
     def crmContactService
 

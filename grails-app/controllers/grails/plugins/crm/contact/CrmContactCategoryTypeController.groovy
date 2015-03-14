@@ -27,14 +27,6 @@ class CrmContactCategoryTypeController {
 
     static allowedMethods = [create: ['GET', 'POST'], edit: ['GET', 'POST'], delete: 'POST']
 
-    static navigation = [
-            [group: 'admin',
-                    order: 420,
-                    title: 'crmContactCategoryType.label',
-                    action: 'index'
-            ]
-    ]
-
     def selectionService
     def crmContactService
 

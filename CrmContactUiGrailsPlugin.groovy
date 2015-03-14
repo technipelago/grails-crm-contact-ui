@@ -76,11 +76,6 @@ This plugin extends crm-contact and provides contact management user interface f
                 [id: "crmContact", index: 100, label: "crmContact.label",
                         template: '/crmContact/messages', plugin: "crm-contact-ui"]
         )
-
-        // Add contact button in main menu.
-        def navigationService = applicationContext.getBean('navigationService')
-        navigationService.registerItem('main', [controller: 'crmContact', action: 'index', title: 'crmContact.index.label', order: 10])
-        navigationService.updated()
     }
 
 }

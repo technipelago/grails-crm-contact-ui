@@ -15,7 +15,7 @@
                 useCache: false,
                 filter: false,
                 preventDefaultReturn: true,
-                selectFirst: true
+                selectFirst: false
             });
             $div.append($newInput);
             $("#category-container").append($div);
@@ -27,7 +27,7 @@
                 useCache: false,
                 filter: false,
                 preventDefaultReturn: true,
-                selectFirst: true
+                selectFirst: false
             });
             $("#btn-add-category").click(function(ev) {
                 ev.preventDefault();

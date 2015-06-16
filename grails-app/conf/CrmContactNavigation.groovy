@@ -1,6 +1,6 @@
 navigation = {
     main(global: true) {
-        crmContact controller: 'crmContact', action: 'index', data: [icon: 'person']
+        crmContact controller: 'crmContact', action: 'index', data: [icon: 'person'], order: 10
     }
     admin(global: true) {
         crmAddressType controller: 'crmAddressType', action: 'index', data: [icon: 'envelope']

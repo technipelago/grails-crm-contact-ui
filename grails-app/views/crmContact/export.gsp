@@ -4,6 +4,14 @@
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'crmContact.label', default: 'CrmContact')}"/>
     <title><g:message code="crmContact.export.title" args="[entityName]"/></title>
+    <r:script>
+    $(document).ready(function() {
+        $('h3 a').click(function(ev) {
+            ev.preventDefault();
+            $(this).closest('form').submit();
+        });
+    });
+    </r:script>
 </head>
 
 <body>
@@ -20,7 +28,7 @@
 
         <div class="row-fluid">
             <div class="span7">
-                <h3>${l.name?.encodeAsHTML()}</h3>
+                <h3><a href="#">${l.name?.encodeAsHTML()}</a></h3>
 
                 <p class="lead">
                     ${l.description?.encodeAsHTML()}

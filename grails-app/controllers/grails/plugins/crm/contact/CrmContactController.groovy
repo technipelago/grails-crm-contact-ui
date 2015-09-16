@@ -85,16 +85,17 @@ class CrmContactController {
 
     def export() {
         def user = crmSecurityService.getUserInfo()
-        def namespace = params.namespace ?: 'crmContact'
+        def ns = params.ns ?: 'crmContact'
         if (request.post) {
             def filename = message(code: 'crmContact.label', default: 'Contact')
             try {
+                def timeout = (grailsApplication.config.crm.task.export.timeout ?: 60) * 1000
                 def topic = params.topic ?: 'export'
-                def result = event(for: namespace, topic: topic,
-                        data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(60000)?.value
+                def result = event(for: ns, topic: topic,
+                        data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(timeout)?.value
                 if (result?.file) {
                     try {
-                        WebUtils.inlineHeaders(response, result.contentType, result.filename ?: namespace)
+                        WebUtils.inlineHeaders(response, result.contentType, result.filename ?: ns)
                         WebUtils.renderFile(response, result.file)
                     } finally {
                         result.file.delete()
@@ -112,7 +113,7 @@ class CrmContactController {
             redirect(action: "index")
         } else {
             def uri = params.getSelectionURI()
-            def layouts = event(for: namespace, topic: (params.topic ?: 'exportLayout'),
+            def layouts = event(for: ns, topic: (params.topic ?: 'exportLayout'),
                     data: [tenant: TenantUtils.tenant, username: user.username, uri: uri]).waitFor(10000)?.values?.flatten()
             [layouts: layouts, selection: uri]
         }

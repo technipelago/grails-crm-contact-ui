@@ -89,7 +89,7 @@ class CrmContactController {
         if (request.post) {
             def filename = message(code: 'crmContact.label', default: 'Contact')
             try {
-                def timeout = (grailsApplication.config.crm.task.export.timeout ?: 60) * 1000
+                def timeout = (grailsApplication.config.crm.contact.export.timeout ?: 60) * 1000
                 def topic = params.topic ?: 'export'
                 def result = event(for: ns, topic: topic,
                         data: params + [user: user, tenant: TenantUtils.tenant, locale: request.locale, filename: filename]).waitFor(timeout)?.value

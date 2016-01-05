@@ -52,6 +52,6 @@ grails.project.dependency.resolution = {
 
         compile ":crm-contact:2.4.1"
         compile ":crm-feature:2.4.1"
-        compile ":crm-ui-bootstrap:2.4.0"
+        compile ":crm-ui-bootstrap:2.4.1"
     }
 }

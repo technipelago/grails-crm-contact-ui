@@ -136,6 +136,7 @@
                 <dt><g:message code="crmContact.title.label" default="Title"/></dt>
                 <dd><g:fieldValue bean="${crmContact}" field="title"/></dd>
             </g:if>
+
             <g:if test="${crmContact.parent}">
                 <dt><g:message code="crmCompany.parent.label" default="Parent Company"/></dt>
                 <dd><g:link action="show" id="${crmContact.parent.id}"><g:fieldValue

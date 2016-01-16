@@ -145,7 +145,8 @@ class CrmContactController {
     def company() {
         def tenant = TenantUtils.tenant
         def crmContact = new CrmContact()
-        def user = crmSecurityService.getUserInfo(params.username) ?: crmSecurityService.getCurrentUser()
+        def currentUser = crmSecurityService.getCurrentUser()
+        def user = crmSecurityService.getUserInfo(params.username)
         params.username = user?.username
         bindData(crmContact, params)
         crmContact.tenantId = tenant
@@ -166,7 +167,11 @@ class CrmContactController {
                             addressTypes: crmContact.addresses ? crmContact.addresses*.type : addressTypes, userList: userList, referer: params.referer])
                     return
                 }
+
+                event(for: "crmContact", topic: "created", data: [id: crmContact.id, tenant: tenant, user: currentUser?.username, name: crmContact.toString()])
+
                 flash.success = message(code: 'default.created.message', args: [message(code: 'crmContact.label', default: 'Company'), crmContact.toString()])
+
                 if (params.referer) {
                     redirect(uri: params.referer - request.contextPath)
                 } else {
@@ -180,13 +185,15 @@ class CrmContactController {
     def contact() {
         def tenant = TenantUtils.tenant
         def crmContact = new CrmContact()
-        def user = crmSecurityService.getUserInfo(params.username) ?: crmSecurityService.getCurrentUser()
+        def currentUser = crmSecurityService.getCurrentUser()
+        def user = crmSecurityService.getUserInfo(params.username)
         params.username = user?.username
 
         bindData(crmContact, params)
         crmContact.tenantId = tenant
 
         def parentContact = crmContact.parent
+        boolean parentCreated = false
         crmContact.parent = null
         def userList = addUserIfMissing(crmSecurityService.getTenantUsers(), crmContact.username)
 
@@ -211,6 +218,7 @@ class CrmContactController {
                     }
                     if (parentContact.save()) {
                         crmContact.addresses?.clear()
+                        parentCreated = true
                     } else {
                         problem = parentContact
                     }
@@ -248,7 +256,13 @@ class CrmContactController {
                             addressTypes: problem.addresses*.type, userList: userList, referer: params.referer])
                     return
                 }
+                if(parentCreated) {
+                    event(for: "crmContact", topic: "created", data: [id: parentContact.id, tenant: tenant, user: currentUser?.username, name: parentContact.toString()])
+                }
+                event(for: "crmContact", topic: "created", data: [id: crmContact.id, tenant: tenant, user: currentUser?.username, name: crmContact.toString()])
+
                 flash.success = message(code: 'default.created.message', args: [message(code: 'crmContact.label', default: 'Contact'), crmContact.toString()])
+
                 if (params.referer) {
                     redirect(uri: params.referer - request.contextPath)
                 } else {
@@ -262,7 +276,8 @@ class CrmContactController {
     def person() {
         def tenant = TenantUtils.tenant
         def crmContact = new CrmContact()
-        def user = crmSecurityService.getUserInfo(params.username) ?: crmSecurityService.getCurrentUser()
+        def currentUser = crmSecurityService.getCurrentUser()
+        def user = crmSecurityService.getUserInfo(params.username)
         params.username = user?.username
 
         bindData(crmContact, params)
@@ -283,7 +298,11 @@ class CrmContactController {
                             addressTypes: crmContact.addresses*.type, userList: userList, referer: params.referer])
                     return
                 }
+
+                event(for: "crmContact", topic: "created", data: [id: crmContact.id, tenant: tenant, user: currentUser?.username, name: crmContact.toString()])
+
                 flash.success = message(code: 'default.created.message', args: [message(code: 'crmContact.label', default: 'Person'), crmContact.toString()])
+
                 if (params.referer) {
                     redirect(uri: params.referer - request.contextPath)
                 } else {
@@ -332,7 +351,9 @@ class CrmContactController {
     def edit(Long id) {
         def tenant = TenantUtils.tenant
         def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
-        def user = crmSecurityService.getUserInfo(params.username) ?: crmSecurityService.getCurrentUser()
+        def user = crmSecurityService.getUserInfo(params.username)
+        def currentUser = crmSecurityService.getCurrentUser()
+
         params.username = user?.username
 
         def crmContact = crmContactService.getContact(id)
@@ -372,6 +393,7 @@ class CrmContactController {
                 }
 
                 flash.success = message(code: 'default.updated.message', args: [message(code: 'crmContact.label', default: 'Contact'), crmContact.toString()])
+                event(for: "crmContact", topic: "updated", data: [id: id, tenant: tenant, user: user?.username, name: crmContact.toString()])
                 redirect(action: "show", id: crmContact.id)
                 break
         }
@@ -558,20 +580,32 @@ class CrmContactController {
                     return
                 }
             } else if(related) {
+                def createPerson = crmContact.isCompany()
                 if(related.startsWith('@')) {
-                    relatedContact = crmContactService.createPerson(firstName: related[1..-1], true)
+                    related = related[1..-1]
+                    createPerson = true
                 } else if(related.endsWith('@')) {
-                    relatedContact = crmContactService.createPerson(firstName: related[0..-2], true)
+                    related = related[0..-2]
+                    createPerson = true
+                }
+                if(createPerson) {
+                    relatedContact = crmContactService.createPerson(firstName: related, true)
                 } else {
                     relatedContact = crmContactService.createCompany(name: related, true)
                 }
             }
 
             if (relatedContact) {
-                def relation = crmContactService.addRelation(crmContact, relatedContact, type, primary, description)
-                flash.success = "Relation ${relation} skapad mellan $crmContact och $relatedContact"
+                def a = crmContact
+                def b = relatedContact
+                if(primary && b.isPerson()) {
+                    b = crmContact
+                    a = relatedContact
+                }
+                def relation = crmContactService.addRelation(a, b, type, primary, description)
+                flash.success = message('crmContactRelation.created.message', default: 'Relation {0} created from {1} to {2}', args: [relation, a, b])
             } else {
-                flash.warning = "No relation created"
+                flash.warning = message(code: 'crmContactRelation.created.none', default: "No relation created")
             }
             redirect(action: 'show', id: id, fragment: "relations")
         } else {

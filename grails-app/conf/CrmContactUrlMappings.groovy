@@ -25,6 +25,10 @@ class CrmContactUrlMappings {
             controller = 'crmContact'
             action = 'edit'
         }
+        name 'crm-contact-duplicates': "/contact/duplicates" {
+            controller = 'crmContactDuplicates'
+            action = 'list'
+        }
         "/contact/$action?/$id?" { controller = "crmContact" }
     }
 }

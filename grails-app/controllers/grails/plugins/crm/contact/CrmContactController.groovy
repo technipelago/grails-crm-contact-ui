@@ -568,6 +568,7 @@ class CrmContactController {
         }
         if (request.post) {
             def related = params.related
+            def created = null
             def relatedContact
             if(related?.isNumber()) {
                 relatedContact = crmContactService.getContact(Long.valueOf(related))
@@ -593,6 +594,7 @@ class CrmContactController {
                 } else {
                     relatedContact = crmContactService.createCompany(name: related, true)
                 }
+                created = relatedContact
             }
 
             if (relatedContact) {
@@ -603,7 +605,15 @@ class CrmContactController {
                     a = relatedContact
                 }
                 def relation = crmContactService.addRelation(a, b, type, primary, description)
-                flash.success = message('crmContactRelation.created.message', default: 'Relation {0} created from {1} to {2}', args: [relation, a, b])
+                if(relation.hasErrors()) {
+                    flash.warning = message(code: 'crmContactRelation.created.none', default: "No relation created")
+                } else {
+                    if(created) {
+                        def currentUser = crmSecurityService.getCurrentUser()
+                        event(for: "crmContact", topic: "created", data: [id: created.id, tenant: created.tenantId, user: currentUser?.username, name: created.toString()])
+                    }
+                    flash.success = message('crmContactRelation.created.message', default: 'Relation {0} created from {1} to {2}', args: [relation, a, b])
+                }
             } else {
                 flash.warning = message(code: 'crmContactRelation.created.none', default: "No relation created")
             }

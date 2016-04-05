@@ -72,13 +72,10 @@ This plugin extends crm-contact and provides contact management user interface f
     def doWithApplicationContext = { applicationContext ->
         // Add a i18n admin page for this plugin's labels and messages.
         def crmPluginService = applicationContext.crmPluginService
-        def index = application.config.crm.contact.navigation.index ?: 100
-        if(index) {
-            crmPluginService.registerView('crmMessage', 'index', 'tabs',
-                    [id      : "crmContact", index: index, label: "crmContact.index.label",
-                     template: '/crmContact/messages', plugin: "crm-contact-ui"]
-            )
-        }
+        crmPluginService.registerView('crmMessage', 'index', 'tabs',
+                [id      : "crmContact", index: 100, label: "crmContact.label",
+                 template: '/crmContact/messages', plugin: "crm-contact-ui"]
+        )
     }
 
 }

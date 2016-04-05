@@ -1,6 +1,9 @@
 navigation = {
     main(global: true) {
-        crmContact controller: 'crmContact', action: 'index', order: 10
+        def index = grailsApplication.config.crm.contact.navigation.index ?: 10
+        if(index) {
+            crmContact controller: 'crmContact', action: 'index', title: 'crmContact.index.label', order: index
+        }
     }
     admin(global: true) {
         crmAddressType controller: 'crmAddressType', action: 'index', order: 110

@@ -84,9 +84,15 @@
 <div class="span9">
 
 <header class="page-header clearfix">
-    <g:if test="${crmContact.person && crmContact.email}">
-        <avatar:gravatar email="${crmContact.email}" size="64" id="avatar" cssClass="avatar pull-right"
-                         defaultGravatarUrl="mm"/>
+    <g:if test="${crmContact.person}">
+        <g:if test="${crmContact.email}">
+            <avatar:gravatar email="${crmContact.email}" size="64" id="avatar" cssClass="avatar pull-right"
+                             defaultGravatarUrl="mm"/>
+        </g:if>
+        <g:else>
+            <img src="${resource(dir: 'images', file: 'person-avatar.png')}" class="avatar pull-right"
+                     width="64" height="64"/>
+        </g:else>
     </g:if>
 
     <g:if test="${crmContact.company}">

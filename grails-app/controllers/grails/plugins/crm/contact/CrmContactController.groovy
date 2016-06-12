@@ -241,7 +241,6 @@ class CrmContactController {
                         crmContact.discard()
                         parentContact?.discard()
                         parentContact = null
-                        tx.setRollbackOnly()
                     } else if (parentContact) {
                         crmContactService.addRelation(crmContact, parentContact, null, true)
                     }

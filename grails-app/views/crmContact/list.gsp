@@ -49,7 +49,7 @@
             <td>
                 <select:link action="show" id="${crmContact.id}" selection="${selection}">
                     ${fieldValue(bean: crmContact, field: "name")}<g:if
-                        test="${parentContact}">, ${parentContact.name.encodeAsHTML()}</g:if>
+                        test="${parentContact}">, ${parentContact.name}</g:if>
                 </select:link>
             </td>
 
@@ -57,7 +57,7 @@
 
             <td>
                 <g:if test="${preferredPhone}">
-                    <a href="tel:${crmContact.telephone}">${preferredPhone.encodeAsHTML()}</a>
+                    <a href="tel:${preferredPhone}">${preferredPhone}</a>
                 </g:if>
             </td>
 

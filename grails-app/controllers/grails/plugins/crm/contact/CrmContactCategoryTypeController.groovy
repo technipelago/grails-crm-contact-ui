@@ -16,6 +16,7 @@
 
 package grails.plugins.crm.contact
 
+import grails.transaction.Transactional
 import org.springframework.dao.DataIntegrityViolationException
 
 import javax.servlet.http.HttpServletResponse
@@ -62,6 +63,7 @@ class CrmContactCategoryTypeController {
         }
     }
 
+    @Transactional
     def create() {
         def crmContactCategoryType = crmContactService.createCategoryType(params)
         switch (request.method) {
@@ -79,6 +81,7 @@ class CrmContactCategoryTypeController {
         }
     }
 
+    @Transactional
     def edit() {
         switch (request.method) {
             case 'GET':
@@ -122,6 +125,7 @@ class CrmContactCategoryTypeController {
         }
     }
 
+    @Transactional
     def delete() {
         def crmContactCategoryType = domainClass.get(params.id)
         if (!crmContactCategoryType) {
@@ -160,6 +164,7 @@ class CrmContactCategoryTypeController {
         return rval
     }
 
+    @Transactional
     def moveUp(Long id) {
         def target = domainClass.get(id)
         if (target) {
@@ -180,6 +185,7 @@ class CrmContactCategoryTypeController {
         redirect action: 'list'
     }
 
+    @Transactional
     def moveDown(Long id) {
         def target = domainClass.get(id)
         if (target) {

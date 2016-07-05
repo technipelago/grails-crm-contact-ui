@@ -83,6 +83,14 @@ class CrmContactController {
         redirect(action: 'index')
     }
 
+    def filter() {
+        def result = [
+                [order    : 10, name: 'Medverkan i aktivitet', description: 'Personer som medverkat i aktivitet',
+                 url      : createLink(controller: 'crmTaskFilter', action: 'contact', params: [ns: 'crmTask', topic: 'filterContactActivity'])]
+        ]
+        render result as JSON
+    }
+
     def export() {
         def user = crmSecurityService.getUserInfo()
         def ns = params.ns ?: 'crmContact'
@@ -163,8 +171,8 @@ class CrmContactController {
 
                 if (!crmContact.save()) {
                     def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
-                    render(view: 'company', model: [user: user, crmContact: crmContact,
-                            addressTypes: crmContact.addresses ? crmContact.addresses*.type : addressTypes, userList: userList, referer: params.referer])
+                    render(view: 'company', model: [user        : user, crmContact: crmContact,
+                                                    addressTypes: crmContact.addresses ? crmContact.addresses*.type : addressTypes, userList: userList, referer: params.referer])
                     return
                 }
 
@@ -200,7 +208,7 @@ class CrmContactController {
         switch (request.method) {
             case 'GET':
                 def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
-                return [user: user, crmContact: crmContact, parentContact: parentContact,
+                return [user        : user, crmContact: crmContact, parentContact: parentContact,
                         addressTypes: addressTypes, userList: userList, referer: params.referer]
             case 'POST':
                 def createPerson = (crmContact.firstName || crmContact.lastName)
@@ -251,11 +259,11 @@ class CrmContactController {
                 }
 
                 if (problem) {
-                    render(view: 'contact', model: [user: user, crmContact: crmContact, parentContact: parentContact,
-                            addressTypes: problem.addresses*.type, userList: userList, referer: params.referer])
+                    render(view: 'contact', model: [user        : user, crmContact: crmContact, parentContact: parentContact,
+                                                    addressTypes: problem.addresses*.type, userList: userList, referer: params.referer])
                     return
                 }
-                if(parentCreated) {
+                if (parentCreated) {
                     event(for: "crmContact", topic: "created", data: [id: parentContact.id, tenant: tenant, user: currentUser?.username, name: parentContact.toString()])
                 }
                 event(for: "crmContact", topic: "created", data: [id: crmContact.id, tenant: tenant, user: currentUser?.username, name: crmContact.toString()])
@@ -287,14 +295,14 @@ class CrmContactController {
         switch (request.method) {
             case 'GET':
                 def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
-                return [user: user, crmContact: crmContact, addressTypes: addressTypes,
+                return [user    : user, crmContact: crmContact, addressTypes: addressTypes,
                         userList: userList, referer: params.referer]
             case 'POST':
                 bindAddresses(crmContact, params)
 
                 if (!crmContact.save()) {
-                    render(view: 'person', model: [user: user, crmContact: crmContact,
-                            addressTypes: crmContact.addresses*.type, userList: userList, referer: params.referer])
+                    render(view: 'person', model: [user        : user, crmContact: crmContact,
+                                                   addressTypes: crmContact.addresses*.type, userList: userList, referer: params.referer])
                     return
                 }
 
@@ -334,7 +342,7 @@ class CrmContactController {
                         }
                     }
                 }
-                return [crmContact: crmContact, children: crmContact.children ?: Collections.EMPTY_LIST, relations: crmContact.relations, primaryRelation: crmContact.primaryRelation,
+                return [crmContact  : crmContact, children: crmContact.children ?: Collections.EMPTY_LIST, relations: crmContact.relations, primaryRelation: crmContact.primaryRelation,
                         externalLink: externalLink, selection: params.getSelectionURI()]
             }
             json {
@@ -367,7 +375,7 @@ class CrmContactController {
         switch (request.method) {
             case "GET":
                 def userList = addUserIfMissing(crmSecurityService.getTenantUsers(), crmContact.username)
-                return [user: user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
+                return [user     : user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
                         titleList: listDistinctTitle(), userList: userList, referer: params.referer]
             case "POST":
                 def userList = addUserIfMissing(crmSecurityService.getTenantUsers(), crmContact.username)
@@ -377,7 +385,7 @@ class CrmContactController {
                         crmContact.errors.rejectValue("version", "default.optimistic.locking.failure",
                                 [message(code: 'crmContact.label', default: 'Contact')] as Object[],
                                 "Another user has updated this contact while you were editing")
-                        return [user: user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
+                        return [user     : user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
                                 titleList: listDistinctTitle(), userList: userList, referer: params.referer]
                     }
                 }
@@ -387,7 +395,7 @@ class CrmContactController {
                 bindAddresses(crmContact, params)
 
                 if (!crmContact.save()) {
-                    return [user: user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
+                    return [user     : user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
                             titleList: listDistinctTitle(), userList: userList, referer: params.referer]
                 }
 
@@ -402,13 +410,13 @@ class CrmContactController {
         // This is a workaround for Grails 2.4.4 data binding that does not insert a new CrmContactAddress when 'id' is null.
         // I consider this to be a bug in Grails 2.4.4 but I'm not sure how it's supposed to work with Set.
         // This workaround was not needed in Grails 2.2.4.
-        for(i in 0..10) {
+        for (i in 0..10) {
             def a = params["addresses[$i]".toString()]
-            if(a && ! a.id) {
+            if (a && !a.id) {
                 def ca = new CrmContactAddress(contact: crmContact)
                 bindData(ca, a)
-                if(! ca.isEmpty()) {
-                    if(ca.validate()) {
+                if (!ca.isEmpty()) {
+                    if (ca.validate()) {
                         crmContact.addToAddresses(ca)
                     } else {
                         crmContact.errors.addAllErrors(ca.errors)
@@ -492,7 +500,7 @@ class CrmContactController {
             crmContact.firstName = names.firstName
             crmContact.lastName = names.lastName
             crmContact.name = null
-            if(crmContact.categories) {
+            if (crmContact.categories) {
                 // Remove all categories.
                 List removeUs = []
                 removeUs.addAll(crmContact.categories)
@@ -569,7 +577,7 @@ class CrmContactController {
             def related = params.related
             def created = null
             def relatedContact
-            if(related?.isNumber()) {
+            if (related?.isNumber()) {
                 relatedContact = crmContactService.getContact(Long.valueOf(related))
                 if (!relatedContact) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND)
@@ -579,16 +587,16 @@ class CrmContactController {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN)
                     return
                 }
-            } else if(related) {
+            } else if (related) {
                 def createPerson = crmContact.isCompany()
-                if(related.startsWith('@')) {
+                if (related.startsWith('@')) {
                     related = related[1..-1]
                     createPerson = true
-                } else if(related.endsWith('@')) {
+                } else if (related.endsWith('@')) {
                     related = related[0..-2]
                     createPerson = true
                 }
-                if(createPerson) {
+                if (createPerson) {
                     relatedContact = crmContactService.createPerson(firstName: related, true)
                 } else {
                     relatedContact = crmContactService.createCompany(name: related, true)
@@ -599,15 +607,15 @@ class CrmContactController {
             if (relatedContact) {
                 def a = crmContact
                 def b = relatedContact
-                if(primary && b.isPerson()) {
+                if (primary && b.isPerson()) {
                     b = crmContact
                     a = relatedContact
                 }
                 def relation = crmContactService.addRelation(a, b, type, primary, description)
-                if(relation.hasErrors()) {
+                if (relation.hasErrors()) {
                     flash.warning = message(code: 'crmContactRelation.created.none', default: "No relation created")
                 } else {
-                    if(created) {
+                    if (created) {
                         def currentUser = crmSecurityService.getCurrentUser()
                         event(for: "crmContact", topic: "created", data: [id: created.id, tenant: created.tenantId, user: currentUser?.username, name: created.toString()])
                     }
@@ -620,11 +628,11 @@ class CrmContactController {
         } else {
             def relation = new CrmContactRelation(a: crmContact)
             // If this person has no existing relations, set property 'primary' to true by default.
-            if(crmContact.person && ! crmContact.getRelations()) {
+            if (crmContact.person && !crmContact.getRelations()) {
                 relation.primary = true
             }
-            render template: 'addRelation', model: [bean: relation, crmContact: crmContact,
-                    relationTypes: crmContactService.listRelationType(null)]
+            render template: 'addRelation', model: [bean         : relation, crmContact: crmContact,
+                                                    relationTypes: crmContactService.listRelationType(null)]
         }
     }
 
@@ -648,8 +656,8 @@ class CrmContactController {
             }
             redirect(action: 'show', id: id, fragment: "relations")
         } else {
-            render template: 'editRelation', model: [crmContact: crmContact, bean: relation,
-                    relationTypes: crmContactService.listRelationType(null)]
+            render template: 'editRelation', model: [crmContact   : crmContact, bean: relation,
+                                                     relationTypes: crmContactService.listRelationType(null)]
         }
     }
 
@@ -820,6 +828,6 @@ class CrmContactController {
         def address = new CrmContactAddress(contact: crmContact)
         WebUtils.noCache(response)
         render(template: "address-add", model: [addressTypes: addressTypes,
-                address: address, row: crmContact.addresses.size()])
+                                                address     : address, row: crmContact.addresses.size()])
     }
 }

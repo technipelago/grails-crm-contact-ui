@@ -16,6 +16,7 @@
 
 package grails.plugins.crm.contact
 
+import grails.transaction.Transactional
 import org.springframework.dao.DataIntegrityViolationException
 import javax.servlet.http.HttpServletResponse
 
@@ -58,6 +59,7 @@ class CrmAddressTypeController {
         }
     }
 
+    @Transactional
     def create() {
         def crmAddressType = crmContactService.createAddressType(params)
         switch (request.method) {
@@ -75,6 +77,7 @@ class CrmAddressTypeController {
         }
     }
 
+    @Transactional
     def edit() {
         switch (request.method) {
             case 'GET':
@@ -118,6 +121,7 @@ class CrmAddressTypeController {
         }
     }
 
+    @Transactional
     def delete() {
         def crmAddressType = domainClass.get(params.id)
         if (!crmAddressType) {
@@ -156,6 +160,7 @@ class CrmAddressTypeController {
         return rval
     }
 
+    @Transactional
     def moveUp(Long id) {
         def target = domainClass.get(id)
         if (target) {
@@ -176,6 +181,7 @@ class CrmAddressTypeController {
         redirect action: 'list'
     }
 
+    @Transactional
     def moveDown(Long id) {
         def target = domainClass.get(id)
         if (target) {

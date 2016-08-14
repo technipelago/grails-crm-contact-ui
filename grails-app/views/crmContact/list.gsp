@@ -6,9 +6,9 @@
     <g:set var="entityName" value="${message(code: 'crmContact.label', default: 'CrmContact')}"/>
     <title><g:message code="crmContact.list.title" args="[entityName]"/></title>
     <style type="text/css">
-        table.crm-list td:first-child, th:first-child {
-            width: 16px;
-        }
+    table.crm-list td:first-child, th:first-child {
+        width: 16px;
+    }
     </style>
 </head>
 
@@ -41,10 +41,8 @@
         <g:set var="parentContact" value="${crmContact.primaryRelation}"/>
         <g:set var="preferredPhone" value="${crmContact.preferredPhone}"/>
         <tr>
-            <td>
-                <g:if test="${crmContact.person}">
-                    <i class="icon-user"></i>
-                </g:if>
+            <td style="width:16px;padding-right:0;">
+                <i class="icon-${crmContact.person ? 'user' : 'home'}"></i>
             </td>
             <td>
                 <select:link action="show" id="${crmContact.id}" selection="${selection}">

@@ -111,17 +111,15 @@
                     <div class="row-fluid">
 
                         <div class="span4">
-                            <g:unless test="${crmContact.parent}">
-                                <f:field property="parent" label="crmContact.company.label">
-                                        <g:textField name="parentName" id="parent"
-                                               value="${crmContact.parent?.name}"
-                                               class="span11" autocomplete="off" autofocus=""/>
-                                </f:field>
-                            </g:unless>
+                            <f:field property="parent" label="crmContact.company.label">
+                                    <g:textField name="parentName" id="parent"
+                                           value="${parentContact?.name}"
+                                           class="span11" autocomplete="off" autofocus=""/>
+                            </f:field>
                             <input type="hidden" name="parent.id" id="parent-id"
-                                   value="${crmContact.parent?.id}"/>
+                                   value="${parentContact?.id}"/>
                             <f:field property="firstName" label="crmContact.firstName.label" input-class="span11"
-                                     required="" autofocus=""/>
+                                     required=""/>
                             <f:field property="lastName" label="crmContact.lastName.label" input-class="span11"/>
                             <f:field property="title" label="crmContact.title.label" input-class="span11"/>
                         </div>

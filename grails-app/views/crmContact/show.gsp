@@ -307,7 +307,7 @@
                 </li>
                 <li>
                     <g:link controller="crmContact" action="contact"
-                            params="${crmContact.company ? ['parent.id': crmContact.id, referer: g.createLink(action: "show", id: crmContact.id, fragment: "children")] : [:]}"><g:message
+                            params="${crmContact.company ? ['parent.id': crmContact.id, referer: g.createLink(action: "show", id: crmContact.id, fragment: "relations")] : [:]}"><g:message
                             code="crmContact.button.create.contact.label" default="Contact"/></g:link>
                 </li>
                 <li>

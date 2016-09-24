@@ -10,10 +10,12 @@
         function addCategoryInput() {
             var $div = $('<div class="row-fluid"/>');
             var $newInput = $('<input type="text" name="category" value="" class="crm-category span11" autocomplete="off"/>');
+
             $newInput.autocomplete("${createLink(action: 'autocompleteCategoryType', params: [max: 20])}", {
                 remoteDataType: 'json',
                 useCache: false,
                 filter: false,
+                minChars: 1,
                 preventDefaultReturn: true,
                 selectFirst: true
             });
@@ -26,6 +28,7 @@
                 remoteDataType: 'json',
                 useCache: false,
                 filter: false,
+                minChars: 1,
                 preventDefaultReturn: true,
                 selectFirst: true
             });

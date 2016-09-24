@@ -12,6 +12,7 @@
             remoteDataType: 'json',
             useCache: false,
             filter: false,
+            minChars: 1,
             preventDefaultReturn: true,
             selectFirst: true
         });

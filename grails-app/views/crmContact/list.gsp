@@ -31,12 +31,15 @@
         <crm:sortableColumn property="name"
                             title="${message(code: 'crmContact.name.label', default: 'Name')}"/>
 
-        <th><g:message code="crmAddress.city.label" default="City"/></th>
+        <crm:sortableColumn property="title"
+                            title="${message(code: 'crmContact.title.label', default: 'Title')}"/>
+
+        <th><g:message code="crmContactRelation.type.label" default="Relation"/></th>
 
         <th class="nowrap"><g:message code="crmContact.telephone.label" default="Telephone"/></th>
 
-        <crm:sortableColumn property="title"
-                            title="${message(code: 'crmContact.title.label', default: 'Title')}"/>
+        <th><g:message code="crmAddress.city.label" default="City"/></th>
+
         <th><g:message code="crmContact.tags.label" default="Tags"/></th>
         <crm:sortableColumn property="number"
                             title="${message(code: 'crmContact.number.label', default: '#')}"/>
@@ -57,7 +60,9 @@
                 </select:link>
             </td>
 
-            <td>${fieldValue(bean: crmContact.address, field: "city")}</td>
+            <td>${fieldValue(bean: crmContact, field: "title")}</td>
+
+            <td>${parentContact?.relation?.name}</td>
 
             <td class="nowrap">
                 <g:if test="${preferredPhone}">
@@ -65,7 +70,7 @@
                 </g:if>
             </td>
 
-            <td>${fieldValue(bean: crmContact, field: "title")}</td>
+            <td>${fieldValue(bean: crmContact.address, field: "city")}</td>
 
             <td>${renderTags(crmContact)}</td>
 

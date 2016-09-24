@@ -14,6 +14,13 @@
 
 <body>
 
+<%
+    def renderTags = { c ->
+        def tags = c.getTagValue()
+        return tags.join(', ')
+    }
+%>
+
 <crm:header title="crmContact.list.title" subtitle="crmContact.totalCount.label"
             args="[entityName, crmContactTotal]"/>
 
@@ -24,14 +31,13 @@
         <crm:sortableColumn property="name"
                             title="${message(code: 'crmContact.name.label', default: 'Name')}"/>
 
-        <th><g:message code="crmContact.address.label" default="Address"/></th>
+        <th><g:message code="crmAddress.city.label" default="City"/></th>
 
-        <th><g:message code="crmContact.telephone.label" default="Telephone"/></th>
-
-        <th><g:message code="crmContact.email.label" default="Email"/></th>
+        <th class="nowrap"><g:message code="crmContact.telephone.label" default="Telephone"/></th>
 
         <crm:sortableColumn property="title"
                             title="${message(code: 'crmContact.title.label', default: 'Title')}"/>
+        <th><g:message code="crmContact.tags.label" default="Tags"/></th>
         <crm:sortableColumn property="number"
                             title="${message(code: 'crmContact.number.label', default: '#')}"/>
     </tr>
@@ -51,22 +57,17 @@
                 </select:link>
             </td>
 
-            <td>${fieldValue(bean: crmContact, field: "address")}</td>
+            <td>${fieldValue(bean: crmContact.address, field: "city")}</td>
 
-            <td>
+            <td class="nowrap">
                 <g:if test="${preferredPhone}">
                     <a href="tel:${preferredPhone}">${preferredPhone}</a>
                 </g:if>
             </td>
 
-            <td>
-                <g:if test="${crmContact.email}">
-                    <a href="mailto:${crmContact.email}"><g:decorate include="abbreviate" max="30"><g:fieldValue
-                        bean="${crmContact}" field="email"/></g:decorate>
-                </g:if>
-            </td>
-
             <td>${fieldValue(bean: crmContact, field: "title")}</td>
+
+            <td>${renderTags(crmContact)}</td>
 
             <td>${fieldValue(bean: crmContact, field: "number")}</td>
         </tr>

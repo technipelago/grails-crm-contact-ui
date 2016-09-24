@@ -43,8 +43,10 @@ This plugin extends crm-contact and provides contact management user interface f
             description "Contact Management"
             link controller: 'crmContact'
             permissions {
-                guest "crmContact:index,list,show,createFavorite,deleteFavorite,clearQuery,qrcode,autocompleteTitle,autocompleteCategoryType,autocompleteTags", "qrcode:*"
-                partner "crmContact:index,list,show,createFavorite,deleteFavorite,clearQuery,qrcode,autocompleteTitle,autocompleteCategoryType,autocompleteTags", "qrcode:*"
+                guest "crmContact:index,list,show,createFavorite,deleteFavorite,clearQuery,qrcode", "qrcode:*",
+                        "crmContact:autocompleteTitle,autocompleteCategoryType,autocompleteRelationType,autocompleteTags"
+                partner "crmContact:index,list,show,createFavorite,deleteFavorite,clearQuery,qrcode", "qrcode:*",
+                        "crmContact:autocompleteTitle,autocompleteCategoryType,autocompleteRelationType,autocompleteTags"
                 user "crmContact:*", "qrcode:*"
                 admin "crmContact,crmAddressType,crmContactCategoryType,crmContactRelationType:*", "qrcode:*"
             }

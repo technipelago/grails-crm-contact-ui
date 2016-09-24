@@ -31,5 +31,6 @@ class CrmContactQueryCommand implements Serializable {
     String url
     String username
     String category
+    String role
     String tags
 }

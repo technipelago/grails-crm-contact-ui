@@ -374,17 +374,34 @@
 <div class="tab-pane" id="relations">
     <tmpl:relations bean="${crmContact}" children="${children}" relations="${relations}"/>
 
-    <g:form>
-        <g:hiddenField name="id" value="${crmContact?.id}"/>
-        <div class="form-actions btn-toolbar">
-            <crm:hasPermission permission="crmContact:create">
-                <g:link action="addRelation" id="${crmContact.id}" class="btn btn-success" elementId="add-relation">
-                    <i class="icon-resize-small icon-white"></i>
-                    <g:message code="crmContactRelation.create.label" default="Add Relation"/>
-                </g:link>
-            </crm:hasPermission>
-        </div>
-    </g:form>
+    <div class="form-actions btn-toolbar">
+        <crm:hasPermission permission="crmContact:create">
+
+            <crm:button type="link" group="true" action="addRelation" id="${crmContact.id}"
+                        visual="success" icon="icon-resize-small icon-white" elementId="add-relation"
+                        label="crmContactRelation.create.label">
+                <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <g:link controller="crmContact" action="company"><g:message
+                                code="crmContact.button.create.company.label" default="Company"/></g:link>
+                    </li>
+                    <li>
+                        <g:link controller="crmContact" action="contact"
+                                params="${crmContact.company ? ['parent.id': crmContact.id, referer: g.createLink(action: "show", id: crmContact.id, fragment: "relations")] : [:]}"><g:message
+                                code="crmContact.button.create.contact.label" default="Contact"/></g:link>
+                    </li>
+                    <li>
+                        <g:link controller="crmContact" action="person"><g:message
+                                code="crmContact.button.create.person.label" default="Individual"/></g:link>
+                    </li>
+                </ul>
+            </crm:button>
+
+        </crm:hasPermission>
+    </div>
 </div>
 
 <crm:pluginViews location="tabs" var="view">

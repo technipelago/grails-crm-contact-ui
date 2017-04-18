@@ -15,16 +15,16 @@
  */
 package grails.plugins.crm.contact
 
-import org.springframework.dao.DataIntegrityViolationException
-import grails.plugins.crm.core.TenantUtils
-import grails.plugins.crm.core.SearchUtils
 import grails.converters.JSON
-import grails.plugins.crm.core.WebUtils
 import grails.converters.XML
+import grails.plugins.crm.core.SearchUtils
+import grails.plugins.crm.core.TenantUtils
+import grails.plugins.crm.core.WebUtils
+import grails.transaction.Transactional
+import org.springframework.dao.DataIntegrityViolationException
 
 import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.TimeoutException
-import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class CrmContactController {
@@ -85,8 +85,11 @@ class CrmContactController {
 
     def filter() {
         def result = [
-                [order    : 10, name: 'Medverkan i aktivitet', description: 'Personer som medverkat i aktivitet',
-                 url      : createLink(controller: 'crmTaskFilter', action: 'contact', params: [ns: 'crmTask', topic: 'filterContactActivity'])]
+                [order      : 10,
+                 name       : message(code: 'crmContact.filter.activity.label'),
+                 description: message(code: 'crmContact.filter.activity.description'),
+                 url        : createLink(controller: 'crmTaskFilter', action: 'contact',
+                         params: [ns: 'crmTask', topic: 'filterContactActivity'])]
         ]
         render result as JSON
     }
@@ -221,7 +224,7 @@ class CrmContactController {
                 def relationTypes = crmContactService.listRelationType(null, [enabled: true])
                 return [user        : user, crmContact: crmContact, parentContact: parentContact,
                         addressTypes: addressTypes, relationTypes: relationTypes,
-                        userList: userList, referer: params.referer]
+                        userList    : userList, referer: params.referer]
             case 'POST':
                 def createPerson = (crmContact.firstName || crmContact.lastName)
                 def problem = null

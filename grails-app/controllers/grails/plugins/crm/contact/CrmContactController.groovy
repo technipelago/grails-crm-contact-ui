@@ -109,8 +109,18 @@ class CrmContactController {
                         result.file.delete()
                     }
                     return null // Success
+                } else if (result?.redirect) {
+                    if (result.error) {
+                        flash.error = message(code: result.error)
+                    } else if (result.warning) {
+                        flash.warning = message(code: result.warning)
+                    } else if (result.success || result.message) {
+                        flash.success = message(code: (result.success ?: result.message))
+                    }
+                    redirect result.redirect
+                    return
                 } else {
-                    flash.warning = message(code: 'crmContact.export.nothing.message', default: 'Nothing was exported')
+                    flash.warning = message(code: 'crmTask.export.nothing.message', default: 'Nothing was exported')
                 }
             } catch (TimeoutException te) {
                 flash.error = message(code: 'crmContact.export.timeout.message', default: 'Export did not complete')
@@ -207,9 +217,11 @@ class CrmContactController {
 
         switch (request.method) {
             case 'GET':
-                def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
+                def addressTypes = crmContactService.listAddressType(null, [enabled: true])
+                def relationTypes = crmContactService.listRelationType(null, [enabled: true])
                 return [user        : user, crmContact: crmContact, parentContact: parentContact,
-                        addressTypes: addressTypes, userList: userList, referer: params.referer]
+                        addressTypes: addressTypes, relationTypes: relationTypes,
+                        userList: userList, referer: params.referer]
             case 'POST':
                 def createPerson = (crmContact.firstName || crmContact.lastName)
                 def problem = null
@@ -250,7 +262,7 @@ class CrmContactController {
                         parentContact?.discard()
                         parentContact = null
                     } else if (parentContact) {
-                        crmContactService.addRelation(crmContact, parentContact, null, true)
+                        crmContactService.addRelation(crmContact, parentContact, params.relationType, true)
                     }
                 } else if (parentContact) {
                     crmContact.discard()

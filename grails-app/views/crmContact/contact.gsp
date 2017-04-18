@@ -119,6 +119,16 @@
                             </f:field>
                             <input type="hidden" name="parent.id" id="parent-id"
                                    value="${parentContact?.id}"/>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.relation.type.label" default="Relation"/>
+                                </label>
+                                <div class="controls">
+                                    <g:select from="${relationTypes}" name="relationType" optionKey="param" class="span11"/>
+                                </div>
+                            </div>
+
                             <f:field property="firstName" label="crmContact.firstName.label" input-class="span11"
                                      required=""/>
                             <f:field property="lastName" label="crmContact.lastName.label" input-class="span11"/>

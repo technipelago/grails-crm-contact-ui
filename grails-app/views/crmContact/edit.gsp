@@ -126,6 +126,10 @@
             </g:each>
             <li><a href="#desc" data-toggle="tab" accesskey="d"><g:message
                     code="crmContact.tab.desc.label"/></a></li>
+
+            <crm:pluginViews location="tabs" var="view">
+                <crm:pluginTab id="${view.id}" label="${view.label}" count="${view.model?.totalCount}"/>
+            </crm:pluginViews>
         </ul>
 
         <div class="tab-content">
@@ -265,6 +269,12 @@
                                 value="${crmContact.description}" class="span10"/>
                 </f:field>
             </div>
+
+            <crm:pluginViews location="tabs" var="view">
+                <div class="tab-pane tab-${view.id}" id="${view.id}">
+                    <g:render template="${view.template}" model="${view.model}" plugin="${view.plugin}"/>
+                </div>
+            </crm:pluginViews>
 
         </div>
     </div>

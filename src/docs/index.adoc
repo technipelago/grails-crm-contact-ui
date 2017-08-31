@@ -87,6 +87,10 @@ iOS does not have built-in support for scanning QRCode images, but you can downl
 
 == Changes
 
+2.4.4:: Fix for invalid handling of parent/parent.id when adding contact on existing org
+        It is now possible to select a relation type when creating a new contact
+        It is now possible to query on relation type.
+        Tags are now displayed in the contact list
 2.4.3:: Events +crmContact.created+ and +crmContact.updated+ are now triggered when contacts are created/updated
 2.4.2:: Export feature is now compatible with Grails 2.4.5 (namespace fix)
 2.4.1:: Main navigation item 'crmContact.index' now have order = 10 to make it easier to position other items.

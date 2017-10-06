@@ -374,7 +374,6 @@ class CrmContactController {
         def tenant = TenantUtils.tenant
         def addressTypes = CrmAddressType.findAllByTenantIdAndEnabled(tenant, true)
         def user = crmSecurityService.getUserInfo(params.username)
-        def currentUser = crmSecurityService.getCurrentUser()
 
         params.username = user?.username
 
@@ -409,7 +408,9 @@ class CrmContactController {
                 bindCategories(crmContact, params.list('category').findAll { it.trim() })
                 bindAddresses(crmContact, params)
 
-                if (!crmContact.save()) {
+                event(for: "crmContact", topic: "bind", data: [id: id, tenant: tenant, user: user?.username, bean: crmContact, params: params], fork: false)
+
+                if (crmContact.hasErrors() || !crmContact.save()) {
                     return [user     : user, crmContact: crmContact, primaryRelation: primaryRelation, addressTypes: addressTypes,
                             titleList: listDistinctTitle(), userList: userList, referer: params.referer]
                 }

@@ -70,12 +70,18 @@ class CrmContactController {
                 // If we only got one record, show the record immediately.
                 redirect action: "show", params: selectionService.createSelectionParameters(uri) + [id: result.head().ident()]
             } else {
-                [crmContactList: result, crmContactTotal: result.totalCount, selection: uri]
+                [crmContactList: result, crmContactTotal: result.totalCount, selection: uri, functions: getSelectionFunctions(uri)]
             }
         } catch (Exception e) {
             flash.error = e.message
             [crmContactList: [], crmContactTotal: 0, selection: uri]
         }
+    }
+
+    private List getSelectionFunctions(uri) {
+        def user = crmSecurityService.getUserInfo()
+        event(for: 'crmContact', topic: 'selection',
+                data: [tenant: TenantUtils.tenant, username: user.username, selection: uri]).waitFor(10000)?.values?.flatten()
     }
 
     def clearQuery() {

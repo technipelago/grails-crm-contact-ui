@@ -103,6 +103,27 @@
                     <g:message code="crmContact.button.export.label" default="Print/Export"/>
                 </select:link>
             </div>
+
+            <g:if test="${functions}">
+                <div class="btn-group">
+                    <a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="icon-play-circle icon-white"></i>
+                        <g:message code="crmContact.selection.process.label" default="Process"/>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <g:each in="${functions}" var="f">
+                            <li>
+                                <select:link controller="${f.controller ?: controllerName}" action="${f.action ?: 'index'}"
+                                             selection="${selection}" params="${[entityName: CrmContact.name, totalCount: crmContactTotal]}" title="${message(code: f.description)}">
+                                    <g:message code="${f.name}"/>
+                                </select:link>
+                            </li>
+                        </g:each>
+                    </ul>
+                </div>
+
+            </g:if>
         </g:if>
 
         <crm:hasPermission permission="crmContact:create">

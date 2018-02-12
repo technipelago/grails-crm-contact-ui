@@ -1,4 +1,4 @@
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${key ?: ''}&sensor=false"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${key ?: ''}&v=3&sensor=false"></script>
 
 <r:script>
 

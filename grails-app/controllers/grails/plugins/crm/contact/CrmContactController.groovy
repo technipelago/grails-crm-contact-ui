@@ -157,7 +157,12 @@ class CrmContactController {
         if (params.type) {
             redirect(action: params.type, params: linkParams)
         } else {
-            return [linkParams: linkParams]
+            def recentCompanies = recentDomainService.getHistory(request, CrmContact).collect {
+                it.object
+            }.findAll { crmContact ->
+                crmContact?.company
+            }.reverse()
+            return [linkParams: linkParams, recentCompanies: recentCompanies]
         }
     }
 
@@ -462,12 +467,15 @@ class CrmContactController {
         final List<CrmContactCategory> remove = []
         for (String c in cats) {
             if (!existing.find { it.toString() == c }) {
-                CrmContactCategoryType t = crmContactService.createCategoryType([name: c], true)
-                if (t.hasErrors()) {
-                    return
-                } else {
-                    add << t
+                CrmContactCategoryType t = crmContactService.listCategoryType(c).find{it}
+                if(t == null) {
+                    t = crmContactService.createCategoryType([name: c], true)
+                    if (t.hasErrors()) {
+                        log.warn("Could not create CrmContactCategoryType: ${t.errors.allErrors}")
+                        continue
+                    }
                 }
+                add << t
             }
         }
         for (CrmContactCategory c in existing) {

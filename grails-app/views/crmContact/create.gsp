@@ -33,8 +33,24 @@
     <div class="form-actions">
         <crm:button type="link" action="company" icon="icon-home icon-white" visual="success"
                     label="crmContact.button.create.company.label" params="${linkParams}"/>
-        <crm:button type="link" action="contact" icon="icon-user icon-white" visual="success"
-                    label="crmContact.button.create.contact.label" params="${linkParams}"/>
+
+        <crm:button type="link" group="true" action="contact" params="${linkParams}" visual="success"
+                    icon="icon-user icon-white" accesskey="c"
+                    label="crmContact.button.create.contact.label" permission="crmContact:create">
+            <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <g:each in="${recentCompanies}" var="company">
+                    <li>
+                        <g:link action="contact" params="${linkParams + ['parent.id': company.id]}">${company}</g:link>
+                    </li>
+                </g:each>
+            </ul>
+        </crm:button>
+
+
+
         <crm:button type="link" action="person" icon="icon-user icon-white" visual="success"
                     label="crmContact.button.create.person.label" params="${linkParams}"/>
     </div>

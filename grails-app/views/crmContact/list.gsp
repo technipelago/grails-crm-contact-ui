@@ -84,7 +84,7 @@
 
 <g:form>
 
-    <div class="form-actions btn-toolbar">
+    <div class="form-actions">
         <input type="hidden" name="offset" value="${params.offset ?: ''}"/>
         <input type="hidden" name="max" value="${params.max ?: ''}"/>
         <input type="hidden" name="sort" value="${params.sort ?: ''}"/>
@@ -149,6 +149,14 @@
                 </ul>
             </crm:button>
         </crm:hasPermission>
+
+        <g:if test="${crmContactTotal}">
+            <shiro:hasRole name="admin">
+                <select:link action="deleteAll" selection="${selection}" style="margin-left: 12px; color: #990000;">
+                    <g:message code="crmContact.button.deleteAll.label" default="Delete all"/>
+                </select:link>
+            </shiro:hasRole>
+        </g:if>
 
     </div>
 </g:form>

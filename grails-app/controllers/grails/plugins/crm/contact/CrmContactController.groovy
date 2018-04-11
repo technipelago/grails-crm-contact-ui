@@ -512,6 +512,52 @@ class CrmContactController {
         }
     }
 
+    def deleteAll() {
+        try {
+            if (request.post) {
+                def errors = []
+                def uri = params.getSelectionURI()
+                def result = selectionService.select(uri, [:])
+                errors.addAll(doDelete(result.findAll{it.person})) // Delete all individuals first
+                errors.addAll(doDelete(result.findAll{it.company && it.parent})) // ... then child organisations
+                errors.addAll(doDelete(result.findAll{it.company && !it.parent})) // ... and finally parent organisations
+                if (errors) {
+                    log.debug("Could not delete the following contacts: $errors")
+                    flash.error = message(code: 'crmContact.deleteAll.error', default: '{1} of {2} contacts could not be deleted', args: [message(code: 'crmContact.label', default: 'Contact'), errors.size(), result.totalCount])
+                    redirect uri: (select.createLink(action: 'list', selection: uri).toString() - request.contextPath)
+                    return
+                } else {
+                    flash.success = message(code: 'crmContact.deleteAll.message', default: '{1} contacts was deleted', args: [message(code: 'crmContact.label', default: 'Contact'), result.totalCount])
+                }
+            } else {
+                def uri = params.getSelectionURI()
+                def result = selectionService.select(uri, [:])
+                return [crmContactList: result, crmContactTotal: result.totalCount, selection: uri]
+            }
+        } catch (Exception e) {
+            flash.error = e.message
+        }
+        redirect action: 'index'
+    }
+
+    private Collection<CrmContact> doDelete(Collection<CrmContact> collection) {
+        def errors = []
+        for (crmContact in collection) {
+            crmContact.discard()
+            CrmContact.withNewTransaction {
+                try {
+                    crmContact = crmContact.merge()
+                    crmContactService.deleteContact(crmContact)
+                } catch (Exception e) {
+                    log.warn("Could not delete contact ${crmContact}: ${e.message}")
+                    errors << crmContact
+                }
+            }
+            Thread.sleep(100)
+        }
+        return errors
+    }
+
     @Transactional
     def changeType(Long id) {
         def crmContact = crmContactService.getContact(id)

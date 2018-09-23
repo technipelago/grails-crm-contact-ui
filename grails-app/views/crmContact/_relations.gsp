@@ -7,6 +7,7 @@
         <th><g:message code="crmContact.telephone.label" default="Telephone"/></th>
         <th><g:message code="crmContact.email.label" default="Email"/></th>
         <th><g:message code="crmContact.address.label" default="Address"/></th>
+        <th style="width:16px;"></th>
     </tr>
     </thead>
     <tbody>
@@ -25,7 +26,7 @@
             </a></td>
 
             <td>${fieldValue(bean: bean.parent, field: "address")}</td>
-
+            <td style="width:16px;"></td>
         </tr>
 
     </g:if>
@@ -45,7 +46,7 @@
             </a></td>
 
             <td>${fieldValue(bean: child, field: "address")}</td>
-
+            <td style="width:16px;"></td>
         </tr>
     </g:each>
 
@@ -53,9 +54,9 @@
         <g:set var="related" value="${relation.getRelated(bean)}"/>
         <tr>
             <td>
-                <a class="crm-edit" data-crm-id="${relation.id}" href="#" title="Click to edit relation details">
+                <g:link mapping="crm-contact-show" id="${related.id}">
                     ${fieldValue(bean: relation, field: "type")}
-                </a>
+                </g:link>
                 <g:if test="${relation.description}">
                     <i class="icon-comment"
                        title="${StringUtils.abbreviate(relation.description, 80).encodeAsHTML()}"></i>
@@ -79,6 +80,11 @@
 
             <td>${fieldValue(bean: related, field: "address")}</td>
 
+            <td style="width:16px;">
+                <a class="crm-edit" data-crm-id="${relation.id}" href="#" title="Click to edit relation details">
+                    <i class="icon-pencil"></i>
+                </a>
+            </td>
         </tr>
     </g:each>
     </tbody>

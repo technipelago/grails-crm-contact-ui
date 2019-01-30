@@ -104,261 +104,283 @@
 
 <g:form action="list">
 
-<div class="row-fluid">
+    <div class="tabbable">
 
-    <div class="span3">
-        <div class="row-fluid">
-            <div class="control-group" style="padding-bottom: 15px;">
-                <label class="control-label"><g:message code="crmContact.type.label"
-                                                        default="Type"/></label>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#find" data-toggle="tab"><g:message code="crmContact.tab.find.label"/></a>
+            </li>
+            <crm:pluginViews location="tabs" var="view">
+                <crm:pluginTab id="${view.id}" label="${view.label}" count="${view.model?.totalCount}"/>
+            </crm:pluginViews>
+        </ul>
 
-                <div class="controls">
-                    <label class="checkbox inline">
-                        <g:checkBox name="company" value="true" checked="${cmd.company}"/>
-                        <g:message code="crmCompany.label" default="Company"/>
-                    </label>
-                    <label class="checkbox inline">
-                        <g:checkBox name="person" value="true" checked="${cmd.person}"/>
-                        <g:message code="crmPerson.label" default="Person"/>
-                    </label>
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="find">
+                <div class="row-fluid">
+
+                    <div class="span3">
+                        <div class="row-fluid">
+                            <div class="control-group" style="padding-bottom: 15px;">
+                                <label class="control-label"><g:message code="crmContact.type.label"
+                                                                    default="Type"/></label>
+
+                                <div class="controls">
+                                    <label class="checkbox inline">
+                                        <g:checkBox name="company" value="true" checked="${cmd.company}"/>
+                                        <g:message code="crmCompany.label" default="Company"/>
+                                    </label>
+                                    <label class="checkbox inline">
+                                        <g:checkBox name="person" value="true" checked="${cmd.person}"/>
+                                        <g:message code="crmPerson.label" default="Person"/>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.name.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="name" value="${cmd.name}" autofocus="" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div id="parentField" class="control-group company-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.parent.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="parent" value="${cmd?.parent}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div id="relatedField" class="control-group person-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.related.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="related" value="${cmd?.related}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div id="titleField" class="control-group person-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.title.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="title" value="${cmd.title}" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.email.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="email" value="${cmd.email}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.telephone.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="telephone" value="${cmd.telephone}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span3">
+                        <div class="row-fluid">
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmAddress.address1.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="address1" value="${cmd.address1}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmAddress.address2.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="address2" value="${cmd.address2}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmAddress.address3.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="address3" value="${cmd.address3}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label"><g:message code="crmAddress.postalAddress.label"/></label>
+
+                                <div class="controls">
+                                    <g:textField name="postalCode" value="${cmd.postalCode}" autocorrect="off" class="span4"/>
+                                    <g:textField name="city" value="${cmd.city}" autocorrect="off" class="span8"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmAddress.country.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="country" value="${cmd.country}" class="span12"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.username.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="username" value="${cmd.username}" autocorrect="off" class="span12"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span3">
+                        <div class="row-fluid">
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContactRelation.type.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="role" value="${cmd.role}" class="span11" autocomplete="off" autocorrect="off"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.category.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="category" value="${cmd.category}" class="span11" autocomplete="off" autocorrect="off"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.tags.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="tags" value="${cmd.tags}" class="span11" autocomplete="off" autocorrect="off"
+                                                 placeholder="${message(code: 'crmContact.tags.placeholder', default: '')}"/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="span3">
+                        <div class="row-fluid">
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.number.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="number" value="${cmd.number}" autocorrect="off" class="span11"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.number2.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="number2" value="${cmd.number2}" autocorrect="off" class="span11"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">
+                                    <g:message code="crmContact.ssn.label"/>
+                                </label>
+
+                                <div class="controls">
+                                    <g:textField name="ssn" value="${cmd.ssn}" autocorrect="off" class="span11"/>
+                                </div>
+                            </div>
+
+                            <g:render template="birthdates" model="${[crmContact: cmd, placeholder: true]}"/>
+
+                        </div>
+                    </div>
                 </div>
+
+                <div class="form-actions btn-toolbar">
+                    <crm:selectionMenu visual="primary">
+                        <crm:button action="list" icon="icon-search icon-white" visual="primary"
+                                    label="crmContact.button.search.label" accesskey="s"/>
+                    </crm:selectionMenu>
+
+                    <crm:hasPermission permission="crmContact:create">
+                        <crm:button type="link" group="true" action="create" visual="success"
+                                    icon="icon-file icon-white"
+                                    label="crmContact.button.create.label" permission="crmContact:create">
+                            <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <g:link controller="crmContact" action="company"><g:message
+                                            code="crmContact.button.create.company.label" default="Company"/></g:link>
+                                </li>
+                                <li>
+                                    <g:link controller="crmContact" action="contact"><g:message
+                                            code="crmContact.button.create.contact.label" default="Contact"/></g:link>
+                                </li>
+                                <li>
+                                    <g:link controller="crmContact" action="person"><g:message
+                                            code="crmContact.button.create.person.label" default="Individual"/></g:link>
+                                </li>
+                            </ul>
+                        </crm:button>
+                    </crm:hasPermission>
+
+                    <g:link action="clearQuery" class="btn btn-link"><g:message code="crmContact.button.query.clear.label"
+                                                                                default="Reset fields"/></g:link>
+                </div>
+
             </div>
 
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.name.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="name" value="${cmd.name}" autofocus="" autocorrect="off" class="span12"/>
+            <crm:pluginViews location="tabs" var="view">
+                <div class="tab-pane tab-${view.id}" id="${view.id}">
+                    <g:render template="${view.template}" model="${view.model}" plugin="${view.plugin}"/>
                 </div>
-            </div>
+            </crm:pluginViews>
 
-            <div id="parentField" class="control-group company-group">
-                <label class="control-label">
-                    <g:message code="crmContact.parent.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="parent" value="${cmd?.parent}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-
-            <div id="relatedField" class="control-group person-group">
-                <label class="control-label">
-                    <g:message code="crmContact.related.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="related" value="${cmd?.related}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-
-            <div id="titleField" class="control-group person-group">
-                <label class="control-label">
-                    <g:message code="crmContact.title.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="title" value="${cmd.title}" class="span12"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.email.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="email" value="${cmd.email}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.telephone.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="telephone" value="${cmd.telephone}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
         </div>
     </div>
-
-    <div class="span3">
-        <div class="row-fluid">
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmAddress.address1.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="address1" value="${cmd.address1}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmAddress.address2.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="address2" value="${cmd.address2}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmAddress.address3.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="address3" value="${cmd.address3}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label"><g:message code="crmAddress.postalAddress.label"/></label>
-
-                <div class="controls">
-                    <g:textField name="postalCode" value="${cmd.postalCode}" autocorrect="off" class="span4"/>
-                    <g:textField name="city" value="${cmd.city}" autocorrect="off" class="span8"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmAddress.country.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="country" value="${cmd.country}" class="span12"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.username.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="username" value="${cmd.username}" autocorrect="off" class="span12"/>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="span3">
-        <div class="row-fluid">
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContactRelation.type.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="role" value="${cmd.role}" class="span11" autocomplete="off" autocorrect="off"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.category.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="category" value="${cmd.category}" class="span11" autocomplete="off" autocorrect="off"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.tags.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="tags" value="${cmd.tags}" class="span11" autocomplete="off" autocorrect="off"
-                                 placeholder="${message(code: 'crmContact.tags.placeholder', default: '')}"/>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="span3">
-        <div class="row-fluid">
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.number.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="number" value="${cmd.number}" autocorrect="off" class="span11"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.number2.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="number2" value="${cmd.number2}" autocorrect="off" class="span11"/>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label class="control-label">
-                    <g:message code="crmContact.ssn.label"/>
-                </label>
-
-                <div class="controls">
-                    <g:textField name="ssn" value="${cmd.ssn}" autocorrect="off" class="span11"/>
-                </div>
-            </div>
-
-            <g:render template="birthdates" model="${[crmContact: cmd, placeholder: true]}"/>
-
-        </div>
-    </div>
-
-</div>
-
-<div class="form-actions btn-toolbar">
-    <crm:selectionMenu visual="primary">
-        <crm:button action="list" icon="icon-search icon-white" visual="primary"
-                    label="crmContact.button.search.label" accesskey="s"/>
-    </crm:selectionMenu>
-
-    <crm:hasPermission permission="crmContact:create">
-        <crm:button type="link" group="true" action="create" visual="success"
-                    icon="icon-file icon-white"
-                    label="crmContact.button.create.label" permission="crmContact:create">
-            <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li>
-                    <g:link controller="crmContact" action="company"><g:message
-                            code="crmContact.button.create.company.label" default="Company"/></g:link>
-                </li>
-                <li>
-                    <g:link controller="crmContact" action="contact"><g:message
-                            code="crmContact.button.create.contact.label" default="Contact"/></g:link>
-                </li>
-                <li>
-                    <g:link controller="crmContact" action="person"><g:message
-                            code="crmContact.button.create.person.label" default="Individual"/></g:link>
-                </li>
-            </ul>
-        </crm:button>
-    </crm:hasPermission>
-
-    <g:link action="clearQuery" class="btn btn-link"><g:message code="crmContact.button.query.clear.label"
-                                                                default="Reset fields"/></g:link>
-</div>
-
 </g:form>
 
 </body>

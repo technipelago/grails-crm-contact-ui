@@ -33,4 +33,5 @@ class CrmContactQueryCommand implements Serializable {
     String category
     String role
     String tags
+    Map<String, String> property = [:]
 }

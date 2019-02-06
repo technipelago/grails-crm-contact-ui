@@ -14,13 +14,6 @@
 
 <body>
 
-<%
-    def renderTags = { c ->
-        def tags = c.getTagValue()
-        return tags.join(', ')
-    }
-%>
-
 <crm:header title="crmContact.list.title" subtitle="crmContact.totalCount.label"
             args="[entityName, crmContactTotal]"/>
 
@@ -72,7 +65,7 @@
 
             <td>${fieldValue(bean: crmContact.address, field: "city")}</td>
 
-            <td>${renderTags(crmContact)}</td>
+            <td><crm:tags bean="${crmContact}"/></td>
 
             <td>${fieldValue(bean: crmContact, field: "number")}</td>
         </tr>

@@ -68,6 +68,14 @@
             preventDefaultReturn: true,
             selectFirst: true
         });
+        $("input[name='activity']").autocomplete("${createLink(controller: 'crmTask', action: 'autocompleteType', params: [max: 20])}", {
+            remoteDataType: 'json',
+            useCache: false,
+            filter: false,
+            minChars: 1,
+            preventDefaultReturn: true,
+            selectFirst: true
+        });
         $("input[name='username']").autocomplete("${createLink(action: 'autocompleteUsernameSimple', params: [max: 20])}", {
             remoteDataType: 'json',
             useCache: false,
@@ -295,6 +303,20 @@
                                                  placeholder="${message(code: 'crmContact.tags.placeholder', default: '')}"/>
                                 </div>
                             </div>
+
+
+                            <crm:hasPlugin name="crm-task">
+                                <div class="control-group">
+                                    <label class="control-label">
+                                        <g:message code="crmTask.label"/>
+                                    </label>
+
+                                    <div class="controls">
+                                        <g:textField name="activity" value="${cmd.activity}" class="span11" autocomplete="off" autocorrect="off"
+                                                     placeholder="${message(code: 'crmContact.activity.placeholder', default: '')}"/>
+                                    </div>
+                                </div>
+                            </crm:hasPlugin>
 
                         </div>
                     </div>

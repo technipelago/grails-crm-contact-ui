@@ -87,6 +87,7 @@ iOS does not have built-in support for scanning QRCode images, but you can downl
 
 == Changes
 
+2.4.6:: Load Google Maps API over https
 2.4.5:: Plugins can now inject tabs on the query/index page
 2.4.4:: Fix for invalid handling of parent/parent.id when adding contact on existing org
         It is now possible to select a relation type when creating a new contact

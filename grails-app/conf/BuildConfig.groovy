@@ -13,9 +13,8 @@ grails.project.fork = [
 
 grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
-    inherits("global") {}
+    inherits "global"
     log "warn"
-    legacyResolve false
     repositories {
         grailsCentral()
         mavenLocal()
@@ -44,11 +43,11 @@ grails.project.dependency.resolution = {
             excludes 'xercesImpl', 'xml-apis'
         }
 
-        compile(":qrcode:0.7")
+        compile(":qrcode:0.7.1")
         compile ":selection-repository:0.9.3"
-        compile ":recent-domain:0.6.0"
-        compile ":decorator:1.1"
-        compile ":user-tag:1.0"
+        compile ":recent-domain:0.6.1"
+        compile ":decorator:1.1.1"
+        compile ":user-tag:1.0.1"
 
         compile ":crm-contact:2.4.5"
         compile ":crm-feature:2.4.3"

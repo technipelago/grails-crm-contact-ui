@@ -5,6 +5,22 @@
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'crmContact.label', default: 'CrmContact')}"/>
     <title><g:message code="crmContact.list.title" args="[entityName]"/></title>
+    <r:script>
+        $(document).ready(function () {
+            $.getJSON("${createLink(action: 'filter', params: [q: selection])}", function(data) {
+                var $menu = $('#selection-menu');
+                for(i = 0; i < data.length; i++) {
+                    var item = data[i];
+                    var $a = $('<a/>');
+                    var $li = $('<li/>');
+                    $a.text(item.name);
+                    $a.attr('href', item.url + '&q=' + "${select.encode(selection: selection)}&referer=${request.forwardURI.encodeAsIsoURL()}");
+                    $li.append($a);
+                    $menu.append($li);
+                }
+            });
+        });
+    </r:script>
     <style type="text/css">
     table.crm-list td:first-child, th:first-child {
         width: 16px;
